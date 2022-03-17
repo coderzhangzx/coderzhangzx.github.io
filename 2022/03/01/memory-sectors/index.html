@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="java内存区域及功能">
+<meta property="og:url" content="http://example.com/2022/03/01/memory-sectors/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/pics/image-20220301012506551.png">
+<meta property="og:image" content="http://example.com/pics/image-20220301012740766.png">
+<meta property="og:image" content="http://example.com/pics/image-20220301013954269.png">
+<meta property="og:image" content="http://example.com/pics/7a1a4a2600e1dca6424461a028357070.png">
+<meta property="article:published_time" content="2022-02-28T17:17:22.000Z">
+<meta property="article:modified_time" content="2022-03-06T16:25:09.384Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pics/image-20220301012506551.png">
+
+<link rel="canonical" href="http://example.com/2022/03/01/memory-sectors/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java内存区域及功能 | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/01/memory-sectors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java内存区域及功能
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-01 01:17:22" itemprop="dateCreated datePublished" datetime="2022-03-01T01:17:22+08:00">2022-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-07 00:25:09" itemprop="dateModified" datetime="2022-03-07T00:25:09+08:00">2022-03-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+<p>​    Java 虚拟机在执⾏ Java 程序的过程中会把它管理的内存划分成若⼲个不同的数据区域。不同的内存区域存放着Java程序的各种数据，所以这些数据内存区统称为<u>运行时数据区（run-time data areas）</u>。</p>
+<p>​    在jdk1.8对区域的划分进行了调整，具体如下所示：</p>
+<p><img src="/../pics/image-20220301012506551.png" alt="image-20220301012506551"><br><img src="/../pics/image-20220301012740766.png" alt="image-20220301012740766"><br>可以看出，线程私有的部分包括<u>程序计数器（PC）、虚拟机栈和本地方法栈</u>；线程共享的部分包括<u>堆、方法区和直接内存（非运行时的数据区的一部分)</u>。</p>
+<hr>
+<h4 id="Program-Counter（程序计数器）"><a href="#Program-Counter（程序计数器）" class="headerlink" title="Program Counter（程序计数器）"></a>Program Counter（<strong>程序计数器）</strong></h4><p>​    可以看作是当前线程所执⾏的字节码的⾏号指示器。字节码解释器⼯作时通过改变这个计数器的值来选取下⼀条需要执⾏的字节码指令，分⽀、循环、跳转、异常处理、线程恢复等功能都需要依赖这个计数器来完成。</p>
+<p>​    显然，为了线程切换后能恢复到正确的执⾏位置，每条线程都需要有⼀个独⽴的程序计数器，各线程之间计数器互不影响，独⽴存储。</p>
+<p>​    从上⾯的介绍中我们知道程序计数器主要有两个作⽤： </p>
+<ol>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从⽽实现代码的流程控制，如：顺序执⾏、选择、循环、异常处理。 </li>
+<li>在多线程的情况下，程序计数器⽤于记录当前线程执⾏的位置，从⽽当线程被切换回来的时候能够知道该线程上次运⾏到哪⼉了。</li>
+</ol>
+<p><u>异常情况：</u>不会出现Error</p>
+<hr>
+<h4 id="JVM-Stack（Java虚拟机栈）"><a href="#JVM-Stack（Java虚拟机栈）" class="headerlink" title="JVM Stack（Java虚拟机栈）"></a>JVM Stack（Java虚拟机栈）</h4><p>​    描述Java⽅法执⾏的内存模型。一个线程对应一个 JVM Stack，一个JVM Stack 中包含一组 Stack Frame。线程每调用一个方法就对应着 JVM Stack 中 Stack Frame 的入栈，方法执行完毕或者异常终止对应着出栈（销毁）。所以，<u>一个stack对应一个线程，一个frame对应一个方法</u>。</p>
+<p>​    在活动线程中，只有位于栈顶的栈帧才是有效的，称为当前栈帧，与这个栈帧相关联的方法称为当前方法。</p>
+<p>​    当 JVM 调用一个 Java 方法时，它从对应类的类型信息中得到此方法的局部变量区和操作数栈的大小，并据此分配栈帧内存，然后压入 JVM 栈中，即<u>栈帧的大小在调用方法时就已经确定</u>。JVM栈的示意图和栈帧中各部分的结构如下所示：</p>
+<p><img src="/../pics/image-20220301013954269.png" alt="image-20220301013954269"></p>
+<p><strong>局部变量表（Local Variable Table）</strong></p>
+<ul>
+<li>在编译程序代码的时候就可以确定栈帧中需要多大的局部变量表，具体大小可在编译后的 Class 文件中看到。</li>
+<li>局部变量表的容量以 Variable Slot（变量槽）为最小单位，每个变量槽都可以存储 32 位长度的内存空间。</li>
+<li>在方法执行时，虚拟机使用局部变量表完成参数值到参数变量列表的传递过程的，如果执行的是实例方法，那局部变量表中第 0 位索引的 Slot 默认是用于传递方法所属对象实例的引用（在方法中可以通过关键字 this 来访问到这个隐含的参数）。</li>
+<li>其余参数则按照参数表顺序排列，占用从 1 开始的局部变量 Slot。</li>
+<li>基本类型数据以及引用和 returnAddress（返回地址）占用一个变量槽，long 和 double 需要两个。</li>
+</ul>
+<p><strong>操作数栈（Operand Stack）</strong></p>
+<ul>
+<li>同样也可以在编译期确定大小。</li>
+<li>Frame 被创建时，操作栈是空的。操作栈的每个项可以存放 JVM 的各种类型数据，其中 long 和 double 类型（64位数据）占用两个栈深。</li>
+<li>方法执行的过程中，会有各种字节码指令往操作数栈中写入和提取内容，也就是出栈和入栈操作（与 Java 栈中栈帧操作类似）。</li>
+<li>操作栈调用其它有返回结果的方法时，会把结果 push 到栈上（通过操作数栈来进行参数传递）。</li>
+</ul>
+<p><strong>动态链接（Dynamic Linking）</strong></p>
+<ul>
+<li>每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态链接。目的是: 当前方法中如果需要调用其他方法的时候, 能够从运行时常量池中找到对应的符号引用, 然后将符号引用转换为直接引用,然后就能直接调用对应方法</li>
+<li>不是所有方法调用都需要动态链接的, 有一部分符号引用会在类加载解析阶段, 将符号引用转换为直接引用, 这部分操作称之为: 静态解析。就是编译期间就能确定调用的版本, 包括: 调用静态方法, 调用实例的私有构造器, 私有方法, 父类方法</li>
+</ul>
+<p><strong>返回地址（Return Address）</strong></p>
+<ul>
+<li>方法开始执行后，只有 2 种方式可以退出 ：方法返回指令，异常退出。</li>
+<li>方法返回后，栈帧会被弹出</li>
+</ul>
+<p><strong>帧数据区（Stack Data）</strong></p>
+<ul>
+<li>帧数据区的大小依赖于 JVM 的具体实现。</li>
+</ul>
+<p><u>异常情况：</u></p>
+<ul>
+<li>StackOverFlowError ： 若 Java 虚拟机栈的内存⼤⼩不允许动态扩展，那么当线程请求栈的深度超过当前 Java 虚拟机栈的最⼤深度的时候，就抛出 StackOverFlowError 错误。</li>
+<li>OutOfMemoryError ： 如果Java虚拟机栈可以动态地扩展,但是扩展大小的时候无法申请到足够的内存，则会抛出一个OutOfMemoryError。</li>
+</ul>
+<hr>
+<h4 id="Native-Method-Stacks-本地方法栈"><a href="#Native-Method-Stacks-本地方法栈" class="headerlink" title="Native Method Stacks (本地方法栈)"></a>Native Method Stacks (本地方法栈)</h4><p>​    本地方发栈类似于Java虚拟机栈，区别就是本地方法栈存储的是Native方法。本地方发栈和Java虚拟机栈在有的虚拟机中是合在一起的，并没有分开，如：Hot Spot虚拟机。</p>
+<p><u>异常情况：</u>同Java虚拟机栈</p>
+<hr>
+<h4 id="Heap（堆）"><a href="#Heap（堆）" class="headerlink" title="Heap（堆）"></a>Heap（堆）</h4><p>​    Java 堆是所有线程共享的⼀块内存区域，在虚拟机启动时创建。⼏乎所有的<u>对象实例以及数组</u>都在这⾥分配内存。（如果某些⽅法中的对象引⽤没有被返回或者未被外⾯使⽤，那么对象可以直接在栈上分配内存。）</p>
+<p>​    Java 堆是垃圾收集器管理的主要区域，因此也被称作GC 堆（Garbage Collected Heap）.从垃圾回收的⻆度，由于现在收集器基本都采⽤分代垃圾收集算法，所以 Java 堆还可以细分为：新⽣代和⽼年代：再细致⼀点有：Eden 空间、From Survivor、To Survivor 空间等。进⼀步划分的⽬的是更好地回收内存，或者更快地分配内存。</p>
+<p><u>异常情况：</u>堆这⾥最容易出现的就是 OutOfMemoryError 错误，并且出现这种错误之后的表现形式还会有⼏ 种，⽐如： </p>
+<ol>
+<li>OutOfMemoryError: GC Overhead Limit Exceeded ： 当JVM花太多时间执⾏垃圾回收并且 只能回收很少的堆空间时，就会发⽣此错误。 </li>
+<li>java.lang.OutOfMemoryError: Java heap space :假如在创建新的对象时, 堆内存中的空间不⾜ 以存放新创建的对象, 就会引发 java.lang.OutOfMemoryError: Java heap space 错误。(和本机物 理内存⽆关，和你配置的内存⼤⼩有关！)</li>
+</ol>
+<hr>
+<h4 id="Method-Area（方法区）"><a href="#Method-Area（方法区）" class="headerlink" title="Method Area（方法区）"></a>Method Area（方法区）</h4><p>​    方法区是各个线程共享的内存区域，在虚拟机启动时创建。它存储<u>每个类的结构</u>，比如：运行时常量池、属性和方法数据，以及方法和构造函数的代码，包括在类和实例初始化以及接口初始化中使用的特殊方法。</p>
+<p>​    方法区在逻辑上是堆的一部分，但是它却又一个别名叫做Non-Heap(非堆)，目的是与Java堆区分开来。</p>
+<p>​    方法区是Java虚拟机规范中的规范，但是具体如何实现并没有规定，所以虚拟机厂商完全可以采用不同的方式实现方法区的。例如，在HotSpot虚拟机中：</p>
+<ul>
+<li><p>jdk1.7及之前版本：方法区采用<u>永久代(Permanent Generation)</u>的方式来实现，方法区的大小我们可以通过参数-XX:PermSize和-XX:MaxPermSize来控制方法区的大小和所能允许最大值。</p>
+</li>
+<li><p>jdk1.8版本：移除了永久代，采用<u>元空间(Metaspace)</u>来实现方法区，所以在jdk1.8中关于永久代的参数-XX:PermSize和-XX:MaxPermSize已经被废弃，取而代之的是参数-XX:MetaspaceSize和-XX:MaxMetaspaceSize。元空间和永久代的一个很大的区别就是元空间已经不在jvm内存在，而是直接存储到了本地内存中。</p>
+</li>
+</ul>
+<p>至于为什么要将方法区改为元空间，主要有以下三个原因：</p>
+<ol>
+<li>整个永久代有⼀个 JVM 本身设置固定⼤⼩上限，⽆法进⾏调整，⽽元空间使⽤的是直接内 存，受本机可⽤内存的限制，虽然元空间仍旧可能溢出，但是⽐原来出现的⼏率会更⼩。 当</li>
+<li>元空间⾥⾯存放的是类的元数据，这样加载多少类的元数据就不由 MaxPermSize 控制了, ⽽由系统的实际可⽤空间来控制，这样能加载的类就更多了。 </li>
+<li>在 JDK8，合并 HotSpot 和 JRockit 的代码时, JRockit 从来没有⼀个叫永久代的东⻄, 合并 之后就没有必要额外的设置这么⼀个永久代的地⽅了。</li>
+</ol>
+<p><u>异常情况：</u>如果方法区域中的内存无法满足分配请求时，将抛出OutOfMemoryError错误。</p>
+<hr>
+<h4 id="Run-Time-Constant-Pool-运行时常量池）"><a href="#Run-Time-Constant-Pool-运行时常量池）" class="headerlink" title="Run-Time Constant Pool (运行时常量池）"></a>Run-Time Constant Pool (运行时常量池）</h4><p>​    运行时常量池是方法区中的一部分，用于存储编译生成的<u>字面量和符号引用</u>。类或接口的运行时常量池是在Java虚拟机创建类或接口时构建的。</p>
+<p><img src="/../pics/7a1a4a2600e1dca6424461a028357070.png" alt="7a1a4a2600e1dca6424461a028357070.png"></p>
+<p>​    此外，在不同的jdk版本中，字符串常量的保存位置也不一样，如下所示：</p>
+<ol>
+<li>JDK1.7之前运⾏时常量池逻辑包含字符串常量池存放在⽅法区, 此时hotspot虚拟机对⽅法区的实现为永久代 </li>
+<li>JDK1.7 字符串常量池被从⽅法区拿到了堆中, 这⾥没有提到运⾏时常量池,也就是说字符串常量池被单独拿到堆,运⾏时常量池剩下的东⻄还在⽅法区, 也就是hotspot中的永久代 。</li>
+<li>JDK1.8 hotspot移除了永久代⽤元空间(Metaspace)取⽽代之, 这时候字符串常量池还 在堆, 运⾏时常量池还在⽅法区, 只不过⽅法区的实现从永久代变成了元空间 (Metaspace)</li>
+</ol>
+<hr>
+<p><strong>Direct Memory（直接内存）</strong></p>
+<p>​    直接内存并不是虚拟机运⾏时数据区的⼀部分，也不是虚拟机规范中定义的内存区域，但是这部分内存也被频繁地使⽤。 </p>
+<p>​    JDK1.4 中新加⼊的 NIO(New Input&#x2F;Output) 类，引⼊了⼀种基于通道（Channel） 与缓存区（Buffer） 的 I&#x2F;O ⽅式，它可以直接使⽤ Native 函数库直接分配堆外内存，然后通过⼀个存储在 Java 堆中的 DirectByteBuffer 对象作为这块内存的引⽤进⾏操作。这样就能在⼀些场景中显著提⾼性能，因为避免了在 Java 堆和 Native 堆之间来回复制数据。</p>
+<p><u>异常情况：</u>OutOfMemoryError</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/28/2022-2-28-dfs-and-bfs-in-2tree/" rel="prev" title="二叉树中的dfs和bfs">
+      <i class="fa fa-chevron-left"></i> 二叉树中的dfs和bfs
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/01/quick-sort/" rel="next" title="快速排序的原理和实现">
+      快速排序的原理和实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Program-Counter%EF%BC%88%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Program Counter（程序计数器）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM-Stack%EF%BC%88Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">JVM Stack（Java虚拟机栈）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Native-Method-Stacks-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="nav-number">3.</span> <span class="nav-text">Native Method Stacks (本地方法栈)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Heap%EF%BC%88%E5%A0%86%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Heap（堆）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Method-Area%EF%BC%88%E6%96%B9%E6%B3%95%E5%8C%BA%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">Method Area（方法区）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Run-Time-Constant-Pool-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">Run-Time Constant Pool (运行时常量池）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>
