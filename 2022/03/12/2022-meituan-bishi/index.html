@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="2022美团测试开发实习生笔试">
+<meta property="og:url" content="http://example.com/2022/03/12/2022-meituan-bishi/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-12T14:07:45.000Z">
+<meta property="article:modified_time" content="2022-03-12T15:20:50.528Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="笔试&amp;面试">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/03/12/2022-meituan-bishi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2022美团测试开发实习生笔试 | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/12/2022-meituan-bishi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2022美团测试开发实习生笔试
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-12 22:07:45 / 修改时间：23:20:50" itemprop="dateCreated datePublished" datetime="2022-03-12T22:07:45+08:00">2022-03-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AF%95-%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">笔试&面试</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<p>共计四道编程题+一道程序设计题</p>
+<p>注：大多数程序的输入需要从控制台读取，需要语句（以Java为例）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in) ;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> sc.nextInt() ;</span><br><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> sc.nextLine() ;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-幸运数"><a href="#1-幸运数" class="headerlink" title="1. 幸运数"></a>1. 幸运数</h3><p><strong>题目描述</strong>：给定一组数，规定其中满足：1）可以被11整除 或2）包含两个及以上的‘1’ 的成为”幸运数“。对于每一个数，如果时幸运数输出”yes“，否则输出”no“。</p>
+<p><strong>思路</strong>：直接判断就行了~</p>
+<h3 id="2-满足条件的连续子序列的个数"><a href="#2-满足条件的连续子序列的个数" class="headerlink" title="2. 满足条件的连续子序列的个数"></a>2. 满足条件的连续子序列的个数</h3><p><strong>题目描述</strong>：给定一个长度为n，只包含±1的字符串str（相邻数字间用空格隔开），求其中所有数的乘积为1的字序列的个数。例如：</p>
+<ul>
+<li>输入：1 -1 1 -1</li>
+<li>输出：3，因为共有[1], [3], [2,3,4]这三个组合，对应坐标的值的乘积为1</li>
+</ul>
+<p><strong>思路</strong>：动态规划。设长度为n的数组dp，其中dp[i]表示以<code>第i个数结尾的所有数的乘积为1的子序列的个数</code>。根据第i+1个数的正负，可以得到以下dp更新公式</p>
+<ul>
+<li>第i+1个数&#x3D;1，dp[i+1] &#x3D; dp[i] +1  &#x2F;&#x2F; 以第i+1个数结尾的子序列，乘以第i+1个数（也就是1）之后乘积不变，+1加的是第i+1个数自己这个子序列</li>
+<li>第i+1个数&#x3D;-1，dp[i+1] &#x3D; i+1-dp[i] &#x2F;&#x2F; 以第i个数结尾的子序列一共有i+1个，所以以第i个数结尾的所有数的乘积为-1子序列的个数就是<code>i+1-dp[i]</code>。这些序列乘以第i+1个数（也就是-1）之后乘积变为1</li>
+</ul>
+<h3 id="3-满足最多的顾客"><a href="#3-满足最多的顾客" class="headerlink" title="3. 满足最多的顾客"></a>3. 满足最多的顾客</h3><p><strong>题目描述</strong>：一餐厅某天只能做m道不同的菜（标记为从1到m），且每道菜只能做一份。现在，n个客人同时进入餐厅，假设他们每人都会点两道不同的菜（都在1到m之间），且只有在两道菜都上齐后才会”满足“。请问如何给客人上菜，才能满足最多的客人。</p>
+<p><strong>思路</strong>：回溯。写一个新的函数getMax：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getMax</span><span class="params">( <span class="type">int</span>[][]orders, <span class="type">int</span> index, <span class="type">int</span> satisfy, <span class="type">boolean</span>[] flags)</span></span><br><span class="line"><span class="comment">// orders：长=n，宽=2，第i行记录以为客人想要的菜品，两道菜品分别是orders[i][0]和orders[i][1]</span></span><br><span class="line"><span class="comment">// index：取值范围0-n-1，表明当前正在考虑是否应该满足哪位客人</span></span><br><span class="line"><span class="comment">// satisfy：截至目前为止满足的客人数</span></span><br><span class="line"><span class="comment">// flags：长度为m的boolean数组，记录对应坐标上的菜是否已经被上给客人</span></span><br></pre></td></tr></table></figure>
+
+<p>​    对于编号为index的客人，找出他想要的两道菜，根据flags判断这两道菜是否还能做：</p>
+<ul>
+<li>如果都能做，则将这两道菜用于满足客人index，更新flags，随后调用：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更新flags数组，在保存现状态的副本后，将对应的菜品改为true</span></span><br><span class="line"><span class="type">int</span> <span class="variable">canSatis</span> <span class="operator">=</span> getMax( orders, index+<span class="number">1</span>, satisfy+<span class="number">1</span>, flags) ; </span><br><span class="line"><span class="comment">// canSatis记录满足客人index之后，还能满足的最大客人数</span></span><br></pre></td></tr></table></figure>
+
+<p>​    在这之后，还需要求出另一种情况，即如果不满足这位客人，接下来能满足的最大客人数，在回溯后，调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 回溯flags数组，回到没有更新两道菜之前的状态</span></span><br><span class="line"> <span class="type">int</span> <span class="variable">cannotSatis</span> <span class="operator">=</span> getMax( orders, index+<span class="number">1</span>, satisfy, flags) ; </span><br><span class="line"> <span class="comment">// cannotSatis记录不满足满足客人index之后，还能满足的最大客人数</span></span><br></pre></td></tr></table></figure>
+
+<p>​    俩者中较大的那个就是返回值。</p>
+<ul>
+<li>如果不能都做，则直接求cannotSatis并返回</li>
+<li>函数的终止条件为” index&#x3D;&#x3D;orders.length() “，此时返回satisfy</li>
+<li>在main函数中，打印下列函数即可：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.print( getMax( orders, <span class="number">0</span>, <span class="number">0</span>, flags) )</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-躲炸弹"><a href="#4-躲炸弹" class="headerlink" title="4. 躲炸弹"></a>4. 躲炸弹</h3><p><strong>题目描述</strong>：在一局游戏中，共n个房间（编号1-n），游戏持续m秒。每秒的开始，会在随机一个房间中引爆一个炸弹（每次轰炸那个房间由一个长为m的数组给出）；每秒的最后，玩家可以改变一次自己所在的房间（初始位置在房间1），并消耗1点能量。问：在保证玩家一定可以存货到最后的前提下（即第一次炸弹不会在初始房间1引爆），玩家最少需要消耗多少能量以保证存活？</p>
+<p><strong>思路</strong>：维护一个长度等于房间数的boolean数组，记录从开始到当前时间，每个房间是否被炸过；在所有房间都被炸过之前，只要一直呆在最后一个被炸的房间里，就是安全的。在这个房间被炸之前的前一秒，移动到下一轮轰炸中，最后一个被轰炸的房间中即可。</p>
+<p>​    每当boolean数组全部由flase变为true时（这意味着所有房间至少被炸一次），移动次数++，数组重置为全false。如此循环直到时间走完。</p>
+<p><strong>注</strong>：本题我的AC是91%，离开后想了想原因应该如下：假设一次游戏中有3个房间，共轰炸六次（3 1 2 3 1 2）。按照上述算法，应该在第一轮轰炸时躲到2，第二轮轰炸时躲到2；但显然，这样会在第三次轰炸的时候gg。所以对于这种”连续两轮最后一个房间相同“的情况，需要一个中转的落脚房间，答案需要+1。</p>
+<h3 id="5-测试用例设计–电话号码的合法性"><a href="#5-测试用例设计–电话号码的合法性" class="headerlink" title="5. 测试用例设计–电话号码的合法性"></a>5. 测试用例设计–电话号码的合法性</h3><p>​    电话号码由<code>区位号-前缀-后缀</code>的格式组成，其中每个部分都有自己的一定要求（数字位数，起始数字之类的），设计合适的用例最大程度地测试合法性</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AC%94%E8%AF%95-%E9%9D%A2%E8%AF%95/" rel="tag"># 笔试&面试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/10/http/" rel="prev" title="http协议详解">
+      <i class="fa fa-chevron-left"></i> http协议详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/12/2022-nus-iss-se-mianshi/" rel="next" title="2022 NUS-ISS-Software Engineering面试">
+      2022 NUS-ISS-Software Engineering面试 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B9%B8%E8%BF%90%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">1. 幸运数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%BB%A1%E8%B6%B3%E6%9D%A1%E4%BB%B6%E7%9A%84%E8%BF%9E%E7%BB%AD%E5%AD%90%E5%BA%8F%E5%88%97%E7%9A%84%E4%B8%AA%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">2. 满足条件的连续子序列的个数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%BB%A1%E8%B6%B3%E6%9C%80%E5%A4%9A%E7%9A%84%E9%A1%BE%E5%AE%A2"><span class="nav-number">3.</span> <span class="nav-text">3. 满足最多的顾客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%BA%B2%E7%82%B8%E5%BC%B9"><span class="nav-number">4.</span> <span class="nav-text">4. 躲炸弹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%AE%BE%E8%AE%A1%E2%80%93%E7%94%B5%E8%AF%9D%E5%8F%B7%E7%A0%81%E7%9A%84%E5%90%88%E6%B3%95%E6%80%A7"><span class="nav-number">5.</span> <span class="nav-text">5. 测试用例设计–电话号码的合法性</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>

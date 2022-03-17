@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="分层架构">
+<meta property="og:url" content="http://example.com/2022/03/06/layers/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/pics/image-20220306012259803.png">
+<meta property="article:published_time" content="2022-03-05T17:21:54.000Z">
+<meta property="article:modified_time" content="2022-03-05T18:28:04.515Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pics/image-20220306012259803.png">
+
+<link rel="canonical" href="http://example.com/2022/03/06/layers/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分层架构 | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/06/layers/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分层架构
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-06 01:21:54 / 修改时间：02:28:04" itemprop="dateCreated datePublished" datetime="2022-03-06T01:21:54+08:00">2022-03-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<h3 id="三种体系架构"><a href="#三种体系架构" class="headerlink" title="三种体系架构"></a>三种体系架构</h3><p>​    学习计算机⽹络时我们⼀般采⽤折中的办法，也就是中和 OSI 和 TCP&#x2F;IP 的优点，采⽤⼀种只有 五层协议的体系结构，这样既简洁⼜能将概念阐述清楚。</p>
+<p><img src="/../pics/image-20220306012259803.png" alt="image-20220306012259803"></p>
+<hr>
+<h3 id="各层的作用简介"><a href="#各层的作用简介" class="headerlink" title="各层的作用简介"></a>各层的作用简介</h3><h4 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h4><p>​    应⽤层(application-layer）的任务是<strong>通过应⽤进程间的交互</strong>来完成特定⽹络应⽤。应⽤层协议定 义的是应⽤进程（进程：主机中正在运⾏的程序）间的通信和交互的规则。对于不同的⽹络应⽤ 需要不同的应⽤层协议。在互联⽹中应⽤层协议很多，如域名系统DNS，⽀持万维⽹应⽤的 HTTP协议，⽀持电⼦邮件的 SMTP协议等等。</p>
+<h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>​    传输层(transport layer)的主要任务就是负责向<strong>两台主机进程之间的通信</strong>提供通⽤的数据传输服 务。我们把传输层交互的数据单元称为<strong>报文段</strong>。“通⽤的”是指并不针对某⼀个特定的⽹络应⽤，⽽是 多种应⽤可以使⽤同⼀个运输层服务。由于⼀台主机可同时运⾏多个线程，因此运输层有<strong>复⽤和分⽤</strong>的功能。所谓复⽤就是指多个应⽤层进程可同时使⽤下⾯传输层层的服务，分⽤和复⽤相反， 是传输层层把收到的信息分别交付上⾯应⽤层中的相应进程。</p>
+<p>运输层主要使⽤以下两种协议: </p>
+<ol>
+<li>传输控制协议 TCP（Transmission Control Protocol）–提供⾯向连接的，可靠的数据传输 务。 </li>
+<li>⽤户数据协议 UDP（User Datagram Protocol）–提供⽆连接的，尽最⼤努⼒的数据传输服务（不保证数据传输的可靠性）。</li>
+</ol>
+<h4 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h4><p>​    在计算机⽹络中进⾏通信的两个计算机之间可能会经过很多个数据链路，也可能还要经过很多通 信⼦⽹。⽹络层的任务就是<strong>选择合适的网间路由和交换结点， 实现主机之间的通信</strong>。 在发送数据 时，⽹络层把运输层产⽣的报⽂段或⽤户数据报封装成分组和包进⾏传送。在 TCP&#x2F;IP 体系结构 中，由于⽹络层使⽤ IP 协议，因此分组也叫 IP 数据报 ，简称<strong>数据报</strong>。</p>
+<p>​    互联⽹是由⼤量的<strong>异构（heterogeneous）⽹络通过路由器（router）</strong>相互连接起来的。互联⽹使 ⽤的⽹络层协议是⽆连接的⽹际协议（Intert Protocol）和许多路由选择协议，因此互联⽹的⽹络 层也叫做⽹际层或IP层</p>
+<h4 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h4><p>​    数据链路层(data link layer)通常简称为链路层。两台主机之间的数据传输，总是在⼀段⼀段的链路上传送的，这就需要使⽤专⻔的链路层的协议来实现<strong>节点之间的通信</strong>。 在两个相邻节点之间传送数据时，数据链路层将⽹络层交下来的 IP 数据报组装成<strong>帧</strong>，在两个相邻节点间的链路上传送帧。每⼀帧包括数据和必要的控制信息（如同步信息，地址信息，差错控制等）</p>
+<p>​    在接收数据时，控制信息使接收端能够知道⼀个帧从哪个⽐特开始和到哪个⽐特结束。这样，数 据链路层在收到⼀个帧后，就可从中提出数据部分，上交给⽹络层。 </p>
+<p>​    控制信息还使接收端能够检测到所收到的帧中有误差错。如果发现差错，数据链路层就简单地丢 弃这个出了差错的帧，以避免继续在⽹络中传送下去⽩⽩浪费⽹络资源。如果需要改正数据在链路层传输时出现差错（<strong>这就是说，数据链路层不仅要检错，⽽且还要纠错，例如</strong>），那么就要采⽤可靠性传输协议来纠正出现的差错。这种⽅法会使链路层的协议复杂些。</p>
+<h4 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h4><p>​    在物理层上所传送的数据单位是<strong>⽐特</strong>。 物理层(physical layer)的作⽤是实现相邻计算机节点之间<strong>⽐特流的透明传送</strong>，尽可能屏蔽掉具体传输介质和物理设备的差异。 使其上⾯的数据链路层不必考虑⽹络的具体传输介质是什么。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/05/bit-operation/" rel="prev" title="Java的二进制表示&位运算符">
+      <i class="fa fa-chevron-left"></i> Java的二进制表示&位运算符
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/three-and-four/" rel="next" title="TCP 三次握⼿和四次挥⼿">
+      TCP 三次握⼿和四次挥⼿ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">三种体系架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E5%B1%82%E7%9A%84%E4%BD%9C%E7%94%A8%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">各层的作用简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="nav-number">2.2.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="nav-number">2.3.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">数据链路层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82"><span class="nav-number">2.5.</span> <span class="nav-text">物理层</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="TCP 三次握⼿和四次挥⼿">
+<meta property="og:url" content="http://example.com/2022/03/06/three-and-four/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/pics/1324014-20200307173500212-139777617.png">
+<meta property="og:image" content="http://example.com/pics/1324014-20200307173529163-43735160.png">
+<meta property="og:image" content="http://example.com/pics/1324014-20200307173553667-1935490469.png">
+<meta property="article:published_time" content="2022-03-05T17:47:59.000Z">
+<meta property="article:modified_time" content="2022-03-05T18:16:23.953Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pics/1324014-20200307173500212-139777617.png">
+
+<link rel="canonical" href="http://example.com/2022/03/06/three-and-four/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>TCP 三次握⼿和四次挥⼿ | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/06/three-and-four/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TCP 三次握⼿和四次挥⼿
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-06 01:47:59 / 修改时间：02:16:23" itemprop="dateCreated datePublished" datetime="2022-03-06T01:47:59+08:00">2022-03-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<h3 id="连接建立过程（三次握手）"><a href="#连接建立过程（三次握手）" class="headerlink" title="连接建立过程（三次握手）"></a>连接建立过程（三次握手）</h3><h4 id="TCP报文格式"><a href="#TCP报文格式" class="headerlink" title="TCP报文格式"></a>TCP报文格式</h4><p>想要了解<code>TCP</code>的三次握手与四次挥手，首先得了解一下<code>TCP</code>的报文格式，因为这两个过程需要依赖<code>TCP</code>报文中的一些字段。下面我们通过一幅图来讲解<code>TCP</code>的报文格式：</p>
+<p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1324014/202003/1324014-20200307173500212-139777617.png"><img src="/../pics/1324014-20200307173500212-139777617.png" alt="img"></a></p>
+<p>  我只介绍<code>TCP</code>报文中，与三次握手和四次挥手有关的部分：</p>
+<ul>
+<li><strong>源端口号</strong>：本次<code>TCP</code>连接中，发起连接的主机使用的端口号；</li>
+<li><strong>目的端口号</strong>：本次<code>TCP</code>连接主，接受连接的主机使用的端口号；</li>
+<li><strong>序号</strong>：通过TCP传输的每一个数据段，都有一个序号，作用是为了确认此数据段的顺序。网络中允许传输的数据长度是有限制的，所以当我们要通过<code>TCP</code>传输一个较大的数据时，<code>TCP</code>会将数据切割成很多小的数据段进行传输。而将这些小的数据段发送到目的主机时（发送方会同时发送多个数据），并不能保证它们是按顺序到达目的地，所以对于每一个数据段，都要有一个序号，来标识它们是属于总数据的哪一部分，以保证在目的主机中能将他们重新拼接。</li>
+<li><strong>确认序号</strong>：接收方若接收到一个数据段，会发送一个确认报文给发送方，告诉发送方已经接收到这个数据段，而确认序号的作用就是告诉发送方接收到了哪条数据段。若接收方接收到了序号为<code>n</code>的报文段，则确认序号将是<code>n+1</code>，表示它已经接收了<code>n</code>，下一条想要接收<code>n+1</code>；</li>
+<li><strong>首部长度</strong>：<code>TCP</code>报文的首部+选项的字节数；</li>
+<li><strong>ACK</strong>：只有<code>1 bit</code>的标志位，若为<code>1</code>，表示这个数据段中的确认序号是有效的，即这个数据报是对之前接收到的某个报文的确认（一个<code>TCP</code>报文可以同时作为确认报文和传递数据报文）。</li>
+<li><strong>RST</strong>：只有<code>1 bit</code>的标志位，若客户端向服务器的一个端口请求建立<code>TCP</code>连接，但是服务器的那个端口并不允许建立连接（比如没开启此端口），则服务器会回送一个<code>TCP</code>报文，将<code>RST</code>位置为1，告诉客户端不要再向这个端口发起连接；</li>
+<li><strong>SYN</strong>：只有<code>1 bit</code>的标志位，若为<code>1</code>，表示这是一条建立连接的<code>TCP</code>报文段；</li>
+<li><strong>FIN</strong>：只有<code>1 bit</code>的标志位，若为<code>1</code>，表示这是一条断开连接的<code>TCP</code>报文段；</li>
+</ul>
+<h4 id="流程详解"><a href="#流程详解" class="headerlink" title="流程详解"></a>流程详解</h4><ul>
+<li><strong>第一步</strong>：客户端的<code>TCP</code>程序首先向服务器的<code>TCP</code>程序发送一个<code>TCP</code>报文。这个报文不包含数据，且它的<code>SYN同步序列编号(Synchronize Sequence Numbers)</code>标志位被置为<code>1</code>，表示这是一条建立连接的<code>TCP</code>报文段，因此这个报文段也被称为<strong>SYN报文段</strong>。客户端的<code>TCP</code>程序随机选择一个序号作为客户端报文的初始序号（假设序号为<code>client_isn</code>），放入这个报文段的序号部分。这个报文段由运输层传递到网络层后，被封装在一个<code>IP</code>数据报中发往服务器；</li>
+<li><strong>第二步</strong>：包含<code>SYN</code>报文段的<code>IP</code>数据报被服务器接收，服务器的网络层将<code>SYN</code>数据报抽取出来，交给运输层，同时服务器为该<code>TCP</code>连接分配资源（包括发送缓存、接收缓存和变量等），并向客户发送允许连接的<code>TCP</code>报文段。这条允许连接的报文段不包含数据，<code>SYN</code>标志位也被置为<code>1</code>，同时它的<code>ACK</code>标志位也被置为1，表示它是<code>SYN</code>报文段的确认报文，所以这条允许连接的报文段也被称为<strong>SYNACK报文段</strong>。服务器随机选择一个序号，作为服务器报文段的初始序号（假设称为<code>server_isn</code>），并将其放入<code>SYNACK</code>报文段的序号部分，同时确认号字段被设置为<code>client_isn + 1</code>（<code>SYN</code>报文段的序号+1）。这个报文段可以解释为服务器向客户端说：“我收到了你的连接请求，我允许你连接，我的初始序号是<code>server_isn</code>”。</li>
+<li><strong>第三步</strong>：当客户端接收到<code>SYNACK</code>报文段后，它也将为<code>TCP</code>连接分配资源（缓存和变量），同时生成一条<code>SYNACK</code>报文段的确认报文，并发送给服务器。由于经过上面两个步骤，已经算是建立了连接，所以这次的<code>SYN</code>标志位将被置为<code>0</code>，而不是<code>1</code>（<code>ACK</code>标志位是<code>1</code>）。同时，这条报文段的序号被设置为<code>client_isn + 1</code>（第一条客户报文的序号是<code>client_isn</code>，而这是它的下一条，所以<code>+1</code>），而确认序号被设置为<code>server_isn + 1</code>（第一条服务器报文的序号是<code>server_isn</code>，客户端成功接收，所以期望服务器下一次发送<code>server_isn + 1</code>）。和上面两条报文不同，第三条报文可以携带数据，比如<code>HTTP</code>的请求就是在<code>TCP</code>的第三次握手报文中发送到服务器的。</li>
+</ul>
+<p><img src="/../pics/1324014-20200307173529163-43735160.png" alt="img"></p>
+<h4 id="为什么是三次？"><a href="#为什么是三次？" class="headerlink" title="为什么是三次？"></a>为什么是三次？</h4><p>​    三次握⼿的⽬的是建⽴可靠的通信信道，说到通讯，简单来说就是数据的发送与接收，⽽三次握 ⼿最主要的⽬的就是双⽅确认⾃⼰与对⽅的发送与接收是正常的。 </p>
+<p>第⼀次握⼿：Client 什么都不能确认；Server 确认了对⽅发送正常，自己接收正常 </p>
+<p>第⼆次握⼿：Client 确认了自己发送、接收正常，对⽅发送、接收正常；Server 确认了：对⽅ 发送正常，⾃⼰接收正常 </p>
+<p>第三次握⼿：Client 确认了：⾃⼰发送、接收正常，对⽅发送、接收正常；Server 确认了：⾃⼰ 发送、接收正常，对⽅发送、接收正常 </p>
+<p>所以三次握⼿就能确认双发收发功能都正常，缺⼀不可。</p>
+<hr>
+<h3 id="连接断开（四次挥手）"><a href="#连接断开（四次挥手）" class="headerlink" title="连接断开（四次挥手）"></a>连接断开（四次挥手）</h3><h4 id="流程详解-1"><a href="#流程详解-1" class="headerlink" title="流程详解"></a>流程详解</h4><p><code>TCP</code>在断开连接时，客户端与服务器之间要交换四次报文，所以，<code>TCP</code>的断开连接也叫四次挥手。</p>
+<ul>
+<li><strong>第一步</strong>：客户端进程发出断开连接指令，这将导致客户端的<code>TCP</code>程序创建一个特殊的<code>TCP</code>报文段，发送到服务器。这个报文段的<code>FIN</code>字段被置为1，表示这是一条断开连接的报文；</li>
+<li><strong>第二步</strong>：服务器接收到客户端发来的断开连接报文，向客户端回送这个报文的确认报文（<code>ACK</code>字段为<code>1</code>），告诉服务器已经接收到<code>FIN</code>报文，并允许断开连接；</li>
+<li><strong>第三步</strong>：服务器发送完确认报文后，服务器的<code>TCP</code>程序创建一条自己的断开连接报文，此报文的<code>FIN</code>字段被置为<code>1</code>，然后发往客户端；</li>
+<li><strong>第四步</strong>：客户端接收到服务器发来的<code>FIN</code>报文段，则产生一条确认报文（<code>ACK</code>为<code>1</code>），发送给服务器，告知服务器已经接收到了它的断开报文。服务器接收到这条<code>ACK</code>报文段后，释放<code>TCP</code>连接相关的资源（缓存和变量），而<strong>客户端等待一段时间后</strong>（半分钟、一分钟或两分钟），也释放处于客户端的缓存和变量；</li>
+</ul>
+<p>  以上就是四次挥手的过程，相对建立连接来说要简单一些。以上是以客户端请求断开连接来举例，但其实也可以由服务器断开连接。</p>
+<p><img src="/../pics/1324014-20200307173553667-1935490469.png" alt="img"></p>
+<h4 id="释放资源顺序的原因"><a href="#释放资源顺序的原因" class="headerlink" title="释放资源顺序的原因"></a>释放资源顺序的原因</h4><p>为什么客户端还要等待一段时间再释放资源呢？原因有两个：</p>
+<ul>
+<li><strong>原因一</strong>：客户端接收到服务器发送的<code>FIN</code>报文后（第三次挥手），会回送一条确认报文（第四次挥手），但是，客户端并不知道这条确认报文是否可以顺利到达服务器。若这条确认报文在传送到服务器的过程中损坏、丢失或超时，将引起服务器重新发送<code>FIN</code>报文，客户端接收到后，将需要再次发送一条确认报文，直到服务器正确接收。但是，客户端发送确认报文后，立刻释放资源，将导致无法处理重传的<code>FIN</code>报文，所以客户端需要等待一段时间，直到确认没有出现上述情况出现再释放资源。</li>
+<li><strong>原因二</strong>：<code>TCP</code>四次挥手完成后，理论上已经断开了连接，但是这不代表之前通过这条连接发送的所有数据都处理完毕了，有些可能还在网络中传输。所以，客户端在断开连接后，需要等待一段时间，直到网络中遗留的数据都死掉，才释放资源。</li>
+</ul>
+<h4 id="为什么是四次？"><a href="#为什么是四次？" class="headerlink" title="为什么是四次？"></a>为什么是四次？</h4><p>​    为什么这个过程需要两边各发起一次？原因就是：<strong>TCP连接是全双工的</strong>。什么是全双工，即<code>A</code>与<code>B</code>建立连接，则<code>A</code>可以向<code>B</code>发送数据，而<code>B</code>也可以向<code>A</code>发送数据。</p>
+<p>  依旧以客户端向服务器断开连接为例。假设客户端和服务器建立了一个<code>TCP</code>连接，在客户端需要向服务器发送的数据都发送完后，客户端就可以向服务器发送一个<code>FIN</code>报文段，请求断开连接；服务器接收到后，将会回送一个<code>ACK</code>报文，告诉客户端，自己已经收到了它断开连接的请求。若只有两次挥手，这个时候连接就算是断开了。但是这样真的合理吗？答案当然是否定的。</p>
+<p>  客户端发送完数据后，告诉服务器，我没有数据了，可以和你断开，但是不代表服务器没有数据需要发送到客户端了呀。<code>TCP</code>是一个全双工的连接，代表服务器也有可能有数据需要发送到客户端。所以，只有当两端的数据都发送完毕，连接才能安全的断开。因此，服务器接收到了客户端的<code>FIN</code>报文段，他会等到自己所有的数据发送完，然后也向客户端发送一个<code>FIN</code>报文，告诉客户端我也没数据了，这时候连接才能真正断开，两端各自释放资源。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/06/layers/" rel="prev" title="分层架构">
+      <i class="fa fa-chevron-left"></i> 分层架构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/tcp-and-udp/" rel="next" title="TCP和UDP的比较分析">
+      TCP和UDP的比较分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E8%BF%87%E7%A8%8B%EF%BC%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">连接建立过程（三次握手）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">TCP报文格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">流程详解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%89%E6%AC%A1%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">为什么是三次？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%EF%BC%88%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">连接断开（四次挥手）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3-1"><span class="nav-number">2.1.</span> <span class="nav-text">流程详解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90%E9%A1%BA%E5%BA%8F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.2.</span> <span class="nav-text">释放资源顺序的原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%9B%E6%AC%A1%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">为什么是四次？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>

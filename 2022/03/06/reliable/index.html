@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="TCP如何做到可靠数据传输">
+<meta property="og:url" content="http://example.com/2022/03/06/reliable/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/pics/image-20220306135255282.png">
+<meta property="og:image" content="http://example.com/pics/20170626210912836.png">
+<meta property="article:published_time" content="2022-03-06T05:43:20.000Z">
+<meta property="article:modified_time" content="2022-03-10T12:19:17.352Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pics/image-20220306135255282.png">
+
+<link rel="canonical" href="http://example.com/2022/03/06/reliable/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>TCP如何做到可靠数据传输 | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/06/reliable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TCP如何做到可靠数据传输
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-06 13:43:20" itemprop="dateCreated datePublished" datetime="2022-03-06T13:43:20+08:00">2022-03-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-10 20:19:17" itemprop="dateModified" datetime="2022-03-10T20:19:17+08:00">2022-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<h3 id="传输过程中遇到的问题"><a href="#传输过程中遇到的问题" class="headerlink" title="传输过程中遇到的问题"></a>传输过程中遇到的问题</h3><p>​    为了提高效率，TCP采用流水线传输机制（pipeline，详见：<a href="/2022/03/10/pipeline/" title="TCP的流水线传输详解">TCP的流水线传输详解</a>）。这使得它从单个报文段和多个报文段的角度都存在潜在问题：</p>
+<p>​    <code>    TCP</code>是依靠网络层的<code>IP</code>协议来发送数据，而<code>IP</code>协议是一个不可靠的协议，它仅仅只是尽最大努力传输，但是并不保证数据能够完好地到达，甚至不能保证数据能否到达。同时，网络中允许传输的最大单元（MTU）是有限制的，一般为<code>1500</code>个字节。所以，<code>TCP</code>为了发送比这个大的数据，需要将数据拆分成一个个数据段进行发送。正因为这些原因，网络传输将存在以下问题：</p>
+<ol>
+<li>数据在传输的过程中被损坏</li>
+<li>数据在传输过程中丢失，没有到达目的地；</li>
+<li>多个报文段没有按顺序到达接收方，因此接收方无法正确地将数据组合；</li>
+<li>发送的内容可能超出路由器和接收端的承载量</li>
+</ol>
+<hr>
+<h3 id="解决数据损坏-–-校验和"><a href="#解决数据损坏-–-校验和" class="headerlink" title="解决数据损坏 – 校验和"></a>解决数据损坏 – 校验和</h3><p>​    在TCP报文的格式中，可以看到其中有一个<code>16</code>位的字段，叫做<strong>校验和</strong>，这就是接收方用来校验数据是否出错的部分。</p>
+<p><img src="/../pics/image-20220306135255282.png" alt="image-20220306135255282"></p>
+<p>这个字段的名称叫做<strong>校验和</strong>，因为<code>TCP</code>对数据校验的方式就是校验和算法，这个算法的过程如下：</p>
+<ol>
+<li>将校验和字段置为<code>0</code>，然后将数据部分以<code>16</code>位为一个单位，进行拆分；</li>
+<li>将拆分后的若干个单元进行二进制相加，若相加结果进位到了第<code>17</code>位，则将<code>17</code>位加到第一位（其实就是<strong>补码和运算</strong>，也称为回卷），最终相加的结果取反（<code>0</code>变成<code>1</code>，<code>1</code>变成<code>0</code>），然后放入校验和字段；</li>
+<li>报文段被发送到目的地后，目标主机也进行上面两步，然后将运算的结果与首部中的校验和字段相加，再取反，若结果为<code>0</code>，则认为数据没有出错。<strong>若数据出错，则接收方会直接将数据丢弃，发送方在一段时间后，没有接收到ACK报文，就会在超时后，重传这个报文</strong>。</li>
+</ol>
+<p>​    类似的错误检查算法包括奇偶校验和冗余循环校验。但他们都不能保证准确地检验出所有错误。只不过由于算法实现的简便程度和网络中数据的低错误率，所以可靠性可以得到保证。</p>
+<hr>
+<h3 id="解决丢包问题-–-自动超时重传（Automatic-Repeat-reQuest，ARQ）"><a href="#解决丢包问题-–-自动超时重传（Automatic-Repeat-reQuest，ARQ）" class="headerlink" title="解决丢包问题 – 自动超时重传（Automatic Repeat reQuest，ARQ）"></a>解决丢包问题 – 自动超时重传（Automatic Repeat reQuest，ARQ）</h3><h4 id="1-三种ARQ机制"><a href="#1-三种ARQ机制" class="headerlink" title="1. 三种ARQ机制"></a>1. 三种ARQ机制</h4><h5 id="停止等待协议（无pipeline）"><a href="#停止等待协议（无pipeline）" class="headerlink" title="停止等待协议（无pipeline）"></a>停止等待协议（无pipeline）</h5><p>​    每发送完一个报文段后，等待对方确认并且收到确认后，再发送下一个报文段；如果没有收到ACK，则会在计时器超时后重传。同时，重传的请求是自动进行的，不需要接受方请求发送某一个丢失或出错的消息。</p>
+<p>​    但显然，这种等停协议意味着不能使用流水线，效率会比较低下。</p>
+<h5 id="连续ARQ请求协议（有pipeline）"><a href="#连续ARQ请求协议（有pipeline）" class="headerlink" title="连续ARQ请求协议（有pipeline）"></a><strong>连续ARQ请求协议</strong>（有pipeline）</h5><p><img src="/../pics/20170626210912836.png" alt="img"></p>
+<p>​    显然，这种利用流水线机制的连续ARQ协议提高了信道的利用率，但也导致在中间某一个包丢失后的重传问题变得复杂。针对这一问题，可以再将流水线机的重传制细分为两类：<strong>回退N步（GBN）和选择重传（SR）</strong>。具体的实现细节详见上文流水线相关的链接。</p>
+<p>​    在本文中，默认接下来的讲解建立在使用TCP的流水线机制（即结合GBN和SR）上。</p>
+<h4 id="2-过程"><a href="#2-过程" class="headerlink" title="2. 过程"></a>2. 过程</h4><p>​    <code>TCP</code>将维护一个计时器，并设置一个超时时间，当发送一个<code>TCP</code>报文段后，没有在超时时间之内得到ACK报文，则发送方将认为数据丢失，于是将重传丢失的报文段，直至接收。由于<code>TCP</code>使用的是<strong>流水线传输</strong>，在同一时间内，可能有多个已经发送但没有接收到<code>ACK</code>的报文段，所以按理来讲，<code>TCP</code>将维护多个计时器，为每一个报文段绑定一个，但是这样做将产生较大的开销，而且对于计时器的管理也很复杂。所以在<code>TCP</code>中，实际上只会维护一个计时器，记录的是当前最早被发送，但是还没有接收到<code>ACK</code>报文的报文段。当这个报文段超时，发送方将重传报文段，并重启计时器；若收到这个报文段的<code>ACK</code>报文，同样重启计时器，不过此时最早被发出但还没有被确认的报文段已经发生了改变，此时记录的就是这个新的报文段的传输时间。除此之外，触发<strong>快速重传</strong>时，计时器也会重新启动（这里不讲）。</p>
+<h4 id="3-超时时间的设定"><a href="#3-超时时间的设定" class="headerlink" title="3. 超时时间的设定"></a>3. 超时时间的设定</h4><h5 id="根据SampleRTT求EstimatedRTT"><a href="#根据SampleRTT求EstimatedRTT" class="headerlink" title="根据SampleRTT求EstimatedRTT"></a>根据SampleRTT求EstimatedRTT</h5><p>​    显然，超时时间应该要略大于数据的往返时间（RTT）；但是网络是不稳定的，对于每一个报文，因为所通过的路径不同，网络拥塞程度的不同，往返时间或多或少都会发生改变。所以对于这个超时时间，应该基于平均RTT进行计算。但是直接统计求平均值就太粗糙了，对于<code>TCP</code>来说，有一套复杂的算法来计算这个超时时间。</p>
+<p>​    要计算<code>RTT</code>的大致平均值，首先得有样本值，假设<strong>样本RTT</strong>定义为<code>SampleRTT</code>。<code>TCP</code>程序在运行期间，可能会在任意时刻测量一次<code>SampleRTT</code>，即测量一个报文从发出到接收<code>ACK</code>所用的时间，然后将它用于计算<code>RTT</code>的加权平均值，即<code>EstimatedRTT</code>。然后过一段时间再进行一次，并将新测出的<code>SampleRTT</code>用于更新加权平均值。在<code>TCP</code>规范中，计算<code>EstimatedRTT</code>的公式为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EstimatedRTT = （1- α）*EstimatedRTT + α * SampleRTT</span><br></pre></td></tr></table></figure>
+
+<p>  其中<code>SampleRTT</code>就是最新测得的样本<code>RTT</code>，通过以上公式就能动态地确定<code>RTT</code>的加权平均值。在<code>TCP</code>规范中，建议将<code>α</code>的值设定为<code>1/8</code>，所以上面的公式就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EstimatedRTT = 0.875*EstimatedRTT + 0.125 * SampleRTT</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="根据SampleRTT、EstimatedRTT求DevRTT"><a href="#根据SampleRTT、EstimatedRTT求DevRTT" class="headerlink" title="根据SampleRTT、EstimatedRTT求DevRTT"></a>根据SampleRTT、EstimatedRTT求DevRTT</h5><p>​    除了求<code>RTT</code>的加权平均值，网络中<code>RTT</code>的变化情况也是很有必要的。样本<code>RTT</code>的波动十分剧烈，只有<code>EstimatedRTT</code>，还不足以让我们准确的估算超时时间。所以我们需要求出<code>SampleRTT</code>与<code>EstimatedRTT</code>的偏离程度，也就是类似于<strong>方差</strong>，根据方差，来动态地设置超时时间。假设这个方差定义为<code>DevRTT</code>，则<code>TCP</code>规范中定义<code>DevRTT</code>的计算公式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DevRTT = （1 - β）* DevRTT + β * | SampleRTT - EstimatedRTT |</span><br></pre></td></tr></table></figure>
+
+<p>​    由上面公式可以看出，如果<code>SampleRTT</code> 的波动很大，<code>DevRTT</code>的值就会很大，反之就会很小。而在<code>TCP</code>规范中<code>β</code>的推荐值是<code>0.25</code>。</p>
+<h5 id="根据EstimatedRTT、DevRTT求超时时间"><a href="#根据EstimatedRTT、DevRTT求超时时间" class="headerlink" title="根据EstimatedRTT、DevRTT求超时时间"></a>根据EstimatedRTT、DevRTT求超时时间</h5><p>​    超时时间应该需要比<code>RTT</code>的加权平均值，也就是<code>EstimatedRTT</code>要大一些，让大部分报文段的<code>RTT</code>都小于这个值，以免频繁超时重传。同时，当网络波动较为剧烈时，表示实际<code>RTT</code>应该会离<code>EstimatedRTT</code>远一些，而波动较小时，实际<code>RTT</code>应该会接近于<code>EstimatedRTT</code>，而这个波动情况的数值，我们已经计算过了，就是上一个公式中的<code>DevRTT</code>，所以假设超时时间定义为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TimeoutInterval = EstimatedRTT + 4 * DevRTT</span><br></pre></td></tr></table></figure>
+
+<p>当然，对于超时时间的计算，还有两个特例：</p>
+<ul>
+<li>当某个报文段超时，发送方将重传这个报文段，同时重新开启定时器，而超时时间将会设置为上一次的<strong>两倍</strong>，而不是使用公式三计算的值；若还是超时，则继续重传，超时时间再次扩大两倍，直到这个报文被成功接收，而成功接收时，才使用公式三重新计算超时时间。这么做的目的是为了防止多次超时导致连续重传，从而导致网络拥塞更加严重，毕竟超时就是网络拥塞的结果。</li>
+<li>记录样本<code>RTT</code>时，不会选择重传的报文段作为样本，这是因为，当发生超时事件时，发送方并不知道数据是因为丢失还是因为网络延迟而超时。若报文段是因为延迟而超时，则重传报文后，这时延迟的<code>ACK</code>报文到达，发送方将误以为重传的分组被正确接收，于是将测出一个错误的<code>SampleRTT</code> 。</li>
+</ul>
+<hr>
+<h3 id="解决乱序到达-–-字节编号"><a href="#解决乱序到达-–-字节编号" class="headerlink" title="解决乱序到达 – 字节编号"></a>解决乱序到达 – 字节编号</h3><p>​    <code>TCP</code>所使用的方法就是为每一个<code>TCP</code>报文段分配一个序号，每个报文段的序号依次增加，这样接收方就可以根据序号，来确定接收到的报文段是整个数据中的哪一部分，以及是否接收到了所有的部分。从上面那张<code>TCP</code>报文结构图中我们可以看到，其中有一个<code>32位</code>的序号字段。但是，<code>TCP</code>对报文段的编号可不是<code>0，1，2，3</code>….这么简单，下面我们就来说说<code>TCP</code>是如何实现这种序号机制的。</p>
+<p>​    首先我们要明确一个点，<strong>TCP是对字节进行编号，而不是对报文段进行编号</strong>。<code>TCP</code>对需要发送的数据的每一个字节都赋予了一个编号，比如第一个字节为<code>0</code>号，第二个为<code>1</code>号，以此类推。而每一个报文段一般都不止封装一个字节的数据，所以在<code>TCP</code>报文段中，封装的是这个报文段的数据中，第一个字节的序号。举个例子，比如说发送方要发送<code>250</code>字节的数据，假设初始序号从<code>0</code>开始，则这<code>250</code>个字节的序号分别是<code>0-249</code>。再假设每一个报文段最多允许封装<code>100</code>个字节的数据，所以第一个报文段将封装第<code>1</code>到<code>100</code>个字节，这些字节的序号为<code>0-99</code>，所以第一个报文段会将<code>0</code>放入它首部中的序号部分；而第二个报文段封装<code>100-199</code>号字节，所以它的序号为<code>100</code>；而第三个报文段封装<code>200-249</code>号字节，所以它的序号为<code>200</code>。以上就是<code>TCP</code>发送方对序号的处理方法。</p>
+<p>  下面来说一说<code>TCP</code>的接收方如何在这种序号机制中工作。同样以上面三个报文段举例，假设发送方将上面三个报文段发出，接收方接收到第一个报文段，发现这个报文的序号是<code>0</code>，同时包含<code>100</code>个字节的数据，于是接收方将会向发送方确认已经接收到这个报文，而确认的方式就是使用<code>TCP</code>首部中的<strong>确认序号</strong>字段。接收方接收到序号为<code>0</code>，长度为<code>100</code>个字节的报文段后，将会在<code>ACK</code>报文的确认序号中填入<code>100</code>，表示自己已经接收到序号小于<code>100</code>的全部字节，希望下一个接收到的报文段的序号是<code>100</code>；而第二个报文段按序到达，序号为<code>100</code>，长度为<code>100</code>字节，于是接收方再次回送<code>ACK</code>报文，此时确认序号将为<code>200</code>，表示自己接收到<code>200</code>以前的全部字节，希望下一条报文的序号是<code>200</code>；然后接收到序号为<code>200</code>，长度为<code>50</code>字节的报文段，将回送确认序号为<code>250</code>的ACK报文。</p>
+<p>  以上是按顺序接收到报文段的情况，假设在上面的情况中，三条报文到达的先后顺序是0 -&gt; 200 -&gt; 100，也就是顺序被打乱，则将发生以下情况：</p>
+<ol>
+<li>接收方接收到序号<code>0</code>，长度<code>100</code>字节的报文段，回送确认号为<code>100</code>的<code>ACK</code>报文；</li>
+<li>接收到序号<code>200</code>，长度为<code>50</code>字节 的报文段，此时接收方希望接收到的是<code>100</code>号报文，于是判断发生了乱序到达的情况，不向上层交付这一段数据，而是将其放入接收缓存；</li>
+<li>接收到序号为<code>100</code>，长度为<code>100</code>的报文段，<code>100</code>正是接收方期待接收到的报文段序号，于是将其接收并交付给上层，同时发现在接收缓存中存在序号为<code>200</code>的报文段，这正是接收方期待接收到的下一条报文，于是将其取出，交付上层，同时向发送方发送<code>ACK</code>报文，<code>ACK</code>的确认序号为<code>250</code>，表示自己已经接收到<code>250</code>之前的所有字节，下一条期望到达的报文的序号是<code>250</code>；</li>
+</ol>
+<p>​    这里还有一个问题，在上面的例子中，我假设序号是从<code>0</code>开始，但是实际情况并非如此。在实际的实现中，序号一般是一个通过特殊算法计算出的随机值，这样做的原因有两点：</p>
+<ol>
+<li>假设每一个<code>TCP</code>连接的序号都是从<code>0</code>开始，那么假设客户端先向服务器发送了一个报文，还没有确认接收后，立即断开连接；但是在断开后，它们立刻又建立了一个连接，而此时，第一次发送出去的报文段才刚到达服务器，那会发生什么情况。服务器会以为这是新建立的连接发送的数据，而由于两次连接的初始序号都是<code>0</code>，接收方将会把这个报文段接收。为了减小类似情况发生的概率，<code>TCP</code>采用随机初始序号，这样两次连接的初始序号将大概率不同，再发生这种情况时，接收方也不会接收这个报文段；</li>
+<li>第二个原因就是出于安全性考虑，若初始序号都是固定的，那每一个报文段的序号完全可以推测得出，于是就有黑客可以利用这一点，模拟发送方发送TCP报文，做出攻击，比如发送大量连接请求，占用服务器资源；</li>
+</ol>
+<hr>
+<h3 id="解决过量数据-–-流量控制与拥塞控制"><a href="#解决过量数据-–-流量控制与拥塞控制" class="headerlink" title="解决过量数据 – 流量控制与拥塞控制"></a>解决过量数据 – 流量控制与拥塞控制</h3><p>​    流量控制与拥塞控制，严格来讲并不是<code>TCP</code>的可靠传输机制，但是也算是有点关系。</p>
+<ul>
+<li>流量控制：<code>TCP</code>的接收方会维持一个接收缓存，用以接收发送方发送的数据。但是，接收缓存不是无限大的，若接收缓存被占满，此时再接收到数据，将无法进行接收，只能将其丢弃。于是，为了减少这种情况的发生，<code>TCP</code>接收方需要告知发送方，自己最多还能接收多少数据，<code>TCP</code>发送方根据这个信息，有选择的发送数据，这就是流量控制；</li>
+<li>拥塞控制：和流量控制类似，但是限制发送数据多少的不是接收方，而是路由器。路由器也有接收缓存，若路由器的接收缓存中存在过多的数据，也会对网络传输造成影响，这就是网络中丢包的原因，而拥塞控制就是根据网络的拥塞状况控制发送数据的速度；</li>
+</ul>
+<p>  这两种机制中，流量控制相对简单。我们可以看到，在<code>TCP</code>的报文格式中，有一个叫做窗口大小的部分，这部分就是接收方告诉发送方，自己当前最多还能接收多少数据，而发送方将发送小于这个窗口大小的数据长度。但是有一种特殊情况，若这个窗口大小为<code>0</code>，表示当前窗口已满，正常情况下发送方将无法发送数据，但是在实际情况中，发送方还是会发送<strong>一个字节</strong>的数据到接收方，作为一种试探。因为接收方一般不会主动向发送方发送报文，这个窗口大小一般是携带在<code>ACK</code>报文中，若此时窗口大小为<code>0</code>，发送方将不再发送数据，接收方也就无法向发送方发送<code>ACK</code>报文，此时就算缓存被清理，发送方也不会知晓。所以即使这个窗口大小为<code>0</code>，发送方仍然需要发送数据，进行试探，若缓存已经被清理，通过试探报文的<code>ACK</code>报文，发送方就能知晓。</p>
+<p>  拥塞控制是<code>TCP</code>中相对复杂的一种机制，不是三言两语说的清楚的，详见：<a href="#">Post not found: conjection-and-flow-control</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/06/tcp-and-udp/" rel="prev" title="TCP和UDP的比较分析">
+      <i class="fa fa-chevron-left"></i> TCP和UDP的比较分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/conjection-control/" rel="next" title="TCP的拥塞控制">
+      TCP的拥塞控制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E8%BF%87%E7%A8%8B%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">传输过程中遇到的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%95%B0%E6%8D%AE%E6%8D%9F%E5%9D%8F-%E2%80%93-%E6%A0%A1%E9%AA%8C%E5%92%8C"><span class="nav-number">2.</span> <span class="nav-text">解决数据损坏 – 校验和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E4%B8%A2%E5%8C%85%E9%97%AE%E9%A2%98-%E2%80%93-%E8%87%AA%E5%8A%A8%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0%EF%BC%88Automatic-Repeat-reQuest%EF%BC%8CARQ%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">解决丢包问题 – 自动超时重传（Automatic Repeat reQuest，ARQ）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%89%E7%A7%8DARQ%E6%9C%BA%E5%88%B6"><span class="nav-number">3.1.</span> <span class="nav-text">1. 三种ARQ机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E7%AD%89%E5%BE%85%E5%8D%8F%E8%AE%AE%EF%BC%88%E6%97%A0pipeline%EF%BC%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">停止等待协议（无pipeline）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%9E%E7%BB%ADARQ%E8%AF%B7%E6%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88%E6%9C%89pipeline%EF%BC%89"><span class="nav-number">3.1.2.</span> <span class="nav-text">连续ARQ请求协议（有pipeline）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">2. 过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E7%9A%84%E8%AE%BE%E5%AE%9A"><span class="nav-number">3.3.</span> <span class="nav-text">3. 超时时间的设定</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AESampleRTT%E6%B1%82EstimatedRTT"><span class="nav-number">3.3.1.</span> <span class="nav-text">根据SampleRTT求EstimatedRTT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AESampleRTT%E3%80%81EstimatedRTT%E6%B1%82DevRTT"><span class="nav-number">3.3.2.</span> <span class="nav-text">根据SampleRTT、EstimatedRTT求DevRTT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AEEstimatedRTT%E3%80%81DevRTT%E6%B1%82%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4"><span class="nav-number">3.3.3.</span> <span class="nav-text">根据EstimatedRTT、DevRTT求超时时间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E4%B9%B1%E5%BA%8F%E5%88%B0%E8%BE%BE-%E2%80%93-%E5%AD%97%E8%8A%82%E7%BC%96%E5%8F%B7"><span class="nav-number">4.</span> <span class="nav-text">解决乱序到达 – 字节编号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E8%BF%87%E9%87%8F%E6%95%B0%E6%8D%AE-%E2%80%93-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E4%B8%8E%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">解决过量数据 – 流量控制与拥塞控制</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>
