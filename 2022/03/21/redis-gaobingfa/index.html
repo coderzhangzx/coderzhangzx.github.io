@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-bounce.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":"enable","async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn","canvas_nest":true,"three_waves":false,"canvas_lines":false,"canvas_sphere":false}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="redis解决高并发问题的方案">
+<meta property="og:url" content="http://example.com/2022/03/21/redis-gaobingfa/index.html">
+<meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478624494952.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478624666954.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478632855046.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478633194608.png">
+<meta property="og:image" content="http://example.com/pics/image-20220321195617991.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786394030712.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786405523714.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786419655516.png">
+<meta property="og:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786429500320.png">
+<meta property="article:published_time" content="2022-03-21T11:28:12.000Z">
+<meta property="article:modified_time" content="2022-03-21T12:05:06.849Z">
+<meta property="article:author" content="Zhang Zhengxin">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70.png">
+
+<link rel="canonical" href="http://example.com/2022/03/21/redis-gaobingfa/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis解决高并发问题的方案 | ZZX's 深境螺旋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZZX's 深境螺旋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我随无意逐鹿，却知苍生苦楚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">51</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/coderzhangzx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/21/redis-gaobingfa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis解决高并发问题的方案
+        </h1>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-21 19:28:12 / 修改时间：20:05:06" itemprop="dateCreated datePublished" datetime="2022-03-21T19:28:12+08:00">2022-03-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+            </span>
+          
+          
+            <div class="post-description"> </div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<h3 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h3><p>首先，布隆过滤器能解决绝大部分恶意攻击的请求，比如我们数据库中的id通常都设为自增的，是有一定范围大小的，如果有黑客恶意用数据库中没有的id一直访问我们的数据库，这就会给数据库造成很大的压力，为了解决这个bug，去我们可以使用布隆过滤器来过滤大部分恶意请求。</p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><p>布隆过滤器（Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。布隆过滤器可以用于检索一个元素是否在一个集合中。它的优点是空间效率和查询时间都比一般的算法要好的多，缺点是有一定的误识别率和删除困难。</p>
+<p>布隆过滤器的原理是，当一个元素被加入集合时，通过K个Hash函数将这个元素映射成一个位数组中的K个点，把它们置为1。检索时，我们只要看看这些点是不是都是1就（大约）知道集合中有没有它了：如果这些点有任何一个0，则被检元素一定不在；如果都是1，则被检元素很可能在。这就是布隆过滤器的基本思想。</p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478624494952.png" alt="在这里插入图片描述"></p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478624666954.png" alt="在这里插入图片描述"></p>
+<p>布隆过滤器会将数据通过多个不同的hash函数将数据生成多个hash值，并映射到槽中，把0变为1，说明有数据。</p>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p> 1：布隆过滤器的缺点也很明显，首先是删除数据非常困难，误算率会随着数据的增加逐步加大。</p>
+<p> 2：它不能准确的判断这个槽中的数据，随着数据的增加，槽中的1也会越来越多，如果我们要查找数据，如果槽中的点有0，就说明没有数据映射到这个bit位上，数据不存在，如果其他的数据也把这个槽中的点置为1，那这个点说明数据存在的，造成了误判，随着数据的增加，被置为1的点会越来越多，即使有一个数据没有被存储过，但万一hash函数返回的三个bit位都被置成了1，那么程序还是会判断这个值是存在的。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>尽管有有一定的缺点，但能防止绝大部分数据的判断，也是很推荐使用布隆过滤器的。</p>
+<p>能更好的解决缓存穿透。</p>
+<hr>
+<h3 id="全量同步和增量同步"><a href="#全量同步和增量同步" class="headerlink" title="全量同步和增量同步"></a>全量同步和增量同步</h3><p>Canal是一个基于MySQL二进制日志的高性能数据同步系统</p>
+<p>全量同步：就是在上线的时候把查询的所有数据都存到redis中，设置永不失效。</p>
+<p>增量同步：在MySql中的binlog日志记录着程序所有的增删改语句，cannal对binlog进行实时监控，如果binlog有更改，就会触发canal同步系统，redis中的内容进行同步更新。</p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478632855046.png" alt="img"></p>
+<p>解决问题：缓存雪崩，缓存击穿</p>
+<hr>
+<h3 id="主从原理"><a href="#主从原理" class="headerlink" title="主从原理"></a>主从原理</h3><p>主节点：master 用来写</p>
+<p>从节点：slave 用来读</p>
+<p>主节点只能有一个，从节点可以有多个</p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-16478633194608.png" alt="img"></p>
+<p>使用场景：当QPS(每秒查询率)达到一定高度时，一台服务器不够用时，需要搭建多台服务器时，就用到了主从复制。</p>
+<p>原理：首先让用户访问从服务器，从服务器和主服务器建立了连接，主服务器发送数据副本，做到实时更新，这样就有额外的从服务器处理读请求，通过将读请求分发到不同的从服务器上进行处理，以达到分担压力，性能增强。用户请求的写功能，从服务器会将这个请求交给主服务器去做。</p>
+<hr>
+<h3 id="实现高可用"><a href="#实现高可用" class="headerlink" title="实现高可用"></a>实现高可用</h3><p>高可用(HA)是分布式系统架构设计中必须考虑的因素之一，它是通过架构设计减少系统不能提供服务的时间。保证高可用通常遵循下面几点：</p>
+<ul>
+<li>单点是系统高可用的大敌，应该尽量在系统设计的过程中避免单点。</li>
+<li>通过架构设计而保证系统高可用的，其核心准则是：冗余。</li>
+<li>实现自动故障转移</li>
+</ul>
+<p>我们现在已经给Redis实现了主从复制，可将主节点数据同步给从节点，从节点此时有两个作用：</p>
+<ul>
+<li><p>从节点扩展主节点的读能力，分担主节点读压力。</p>
+</li>
+<li><p>一旦主节点宕机，从节点作为主节点的备份可以随时顶上来。（高可用）</p>
+</li>
+</ul>
+<hr>
+<h3 id="哨兵机制（Sentinel）"><a href="#哨兵机制（Sentinel）" class="headerlink" title="哨兵机制（Sentinel）"></a>哨兵机制（Sentinel）</h3><h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><p>​    当主节点宕机，从节点晋升为主节点，同时修改应用方的主节点地址，还需要命令所有从节点去复制新的主节点，这个过程都是由Sentinel来进行实时监控的。</p>
+<h4 id="哨兵有三个定时监控任务完成对各节点的发现和监控"><a href="#哨兵有三个定时监控任务完成对各节点的发现和监控" class="headerlink" title="哨兵有三个定时监控任务完成对各节点的发现和监控"></a>哨兵有三个定时监控任务完成对各节点的发现和监控</h4><p><img src="/../pics/image-20220321195617991.png" alt="image-20220321195617991"></p>
+<p>任务1，每个哨兵节点每10秒会向主节点和从节点发送info命令获取最新拓扑结构图，哨兵配置时只要配置对主节点的监控即可(sentinel monitor mymaster 192.168.1.3 26379 2)，通过向主节点发送info，获取从节点的信息，并当有新的从节点加入时可以马上感知到；</p>
+<p>任务2，每个哨兵节点每隔2秒会向redis数据节点的指定频道上发送该哨兵节点对于主节点的判断以及当前哨兵节点的信息，同时每个哨兵节点也会订阅该频道，来了解其它哨兵节点的信息及对主节点的判断，其实就是通过消息publish和subscribe来完成的；</p>
+<p>任务3，每隔1秒每个哨兵会向主节点、从节点及其余哨兵节点发送一次ping命令做一次心跳检测，这个也是哨兵用来判断节点是否正常的重要依据</p>
+<h4 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h4><p>由Sentinel节点定期监控发现主节点是否出现了故障，sentinel会向master发送心跳PING来确认master是否存活，如果master在“一定时间范围”内不回应PONG 或者是回复了一个错误消息，那么这个sentinel会主观地(单方面地)认为这个master已经不可用了，会要求其他sentinel确认该节点是否丢失，如果确认，则认为是客观下线，的确不可用了，开始进行故障转移</p>
+<hr>
+<h3 id="负载均衡和高可用"><a href="#负载均衡和高可用" class="headerlink" title="负载均衡和高可用"></a>负载均衡和高可用</h3><p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786394030712.png" alt="[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-ygIYRYHM-1596442557302)(C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1596165498852.png)]"></p>
+<h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><p>1：用户发送请求，首先经过nginx进行反向代理和负载均衡之后，再发送给tomcat集群，做到每个tomcat可以平均分担负载。不会因为某台服务器负载高宕机而某台服务器闲置的情况。</p>
+<p>2：在这中间要考虑高可用问题，所以，采用tomcat集群的方式，我们防止nginx挂掉，多部署一个或多个nginx，实现高可用</p>
+<p>3：如果nginx挂掉怎么办，在经过nginx之前用Linux的LVS（Linux虚拟服务器）采用IP负载均衡技术和基于内容请求分发技术进行负载均衡</p>
+<p>4：那如果LVS挂掉了怎么办，还有硬件级负载均衡（F5）</p>
+<p>5：如果还担心硬件级别的服务器挂掉了，就建立多个机房，在不同地区，考虑到自然灾害，一个机房不可用了，另一个稍远一点的机房就可以工作了，可能会出现响应变慢，这是肯定的。比如一些世界500强，就实施两地三中心。</p>
+<hr>
+<h3 id="redsi-Cluster-集群"><a href="#redsi-Cluster-集群" class="headerlink" title="redsi-Cluster 集群"></a>redsi-Cluster 集群</h3><h4 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h4><p>当哨兵模式下的数据访问过大，大到一台服务器存放不下的情况时，主从模式或sentinel模式就不能满足需求了，这个时候就需要对服务器进行分片，将数据存储到多个redis的 实例中，cluster模式的出现就是为了解决单机Redis容量有限的问题，将Redis的数据根据一定的规则分配到多台机器。</p>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786405523714.png" alt="[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-7ciQU7Op-1596442557304)(C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1596173322255.png)]"></p>
+<p>cluster可以说是sentinel和主从模式的结合体，通过cluster可以实现主从和master重选功能，所以如果配置两个副本三个分片的话，就需要六个Redis实例。因为Redis的数据是根据一定规则分配到cluster的不同机器的，当数据量过大时，可以新增机器进行扩容。</p>
+<h4 id="架构特点"><a href="#架构特点" class="headerlink" title="架构特点"></a>架构特点</h4><ul>
+<li><p>所有的redis节点彼此互联(PING-PONG机制)，内部使用二进制协议优化传输速度和带宽。</p>
+</li>
+<li><p>节点的fail是通过集群中超过半数的master节点检测失效时才生效。</p>
+</li>
+<li><p>客户端与redis节点直连，不需要连接集群所有节点，只需要连接集群中任意可用节点即可。</p>
+</li>
+<li><p>集群把所有的物理节点映射到[0-16383]slot上,cluster 负责维护node&lt;&gt;slot&lt;&gt;key关系</p>
+</li>
+<li><p>数据分配规则：hash；高可用机制：复制节点数据</p>
+</li>
+</ul>
+<hr>
+<h3 id="redis的另一种集群方式：Codis"><a href="#redis的另一种集群方式：Codis" class="headerlink" title="redis的另一种集群方式：Codis"></a>redis的另一种集群方式：Codis</h3><p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786419655516.png" alt="img"></p>
+<p>​    简单来说，codis是作为一个中间件存在的，当客户端向codis发送指令时，codis负责将指令转发到后面的redis来执行，并将结果返回给客户端，一个codis实例可以连接多个redis实例，也可以启动多个codis实例来支撑，每个codis节点都是对等的，这样可以增加整体的QPS需求，还能起到容灾功能。</p>
+<hr>
+<h3 id="redis的持久化技术"><a href="#redis的持久化技术" class="headerlink" title="redis的持久化技术"></a>redis的持久化技术</h3><p>Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性“</p>
+<ul>
+<li><p>RDB：在指定的时间间隔能对数据进行快照存储。</p>
+</li>
+<li><p>AOF：每次对服务器写的操作都记录在一个日志文件中,当服务器重启的时候会重新执行这些命令来恢复原始的数据</p>
+</li>
+</ul>
+<p><img src="/../pics/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0ODkwNTM5,size_16,color_FFFFFF,t_70-164786429500320.png" alt="[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Octzs8NO-1596442557309)(C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1596175563353.png)]"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/21/feijujisuoyin/" rel="prev" title="MySQL中的聚类索引和非聚类索引">
+      <i class="fa fa-chevron-left"></i> MySQL中的聚类索引和非聚类索引
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">布隆过滤器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5%E5%92%8C%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5"><span class="nav-number">2.</span> <span class="nav-text">全量同步和增量同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">主从原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">实现高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%EF%BC%88Sentinel%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">哨兵机制（Sentinel）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">5.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%A8%E5%85%B5%E6%9C%89%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6%E7%9B%91%E6%8E%A7%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%AF%B9%E5%90%84%E8%8A%82%E7%82%B9%E7%9A%84%E5%8F%91%E7%8E%B0%E5%92%8C%E7%9B%91%E6%8E%A7"><span class="nav-number">5.2.</span> <span class="nav-text">哨兵有三个定时监控任务完成对各节点的发现和监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">5.3.</span> <span class="nav-text">故障转移</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">负载均衡和高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">6.1.</span> <span class="nav-text">流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redsi-Cluster-%E9%9B%86%E7%BE%A4"><span class="nav-number">7.</span> <span class="nav-text">redsi-Cluster 集群</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="nav-number">7.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E7%89%B9%E7%82%B9"><span class="nav-number">7.2.</span> <span class="nav-text">架构特点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E7%9A%84%E5%8F%A6%E4%B8%80%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F%EF%BC%9ACodis"><span class="nav-number">8.</span> <span class="nav-text">redis的另一种集群方式：Codis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96%E6%8A%80%E6%9C%AF"><span class="nav-number">9.</span> <span class="nav-text">redis的持久化技术</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zhang Zhengxin"
+      src="/images/head.gif">
+  <p class="site-author-name" itemprop="name">Zhang Zhengxin</p>
+  <div class="site-description" itemprop="description">This is a blog containing all the infor learn within my CS learning process!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/coderzhangzx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;coderzhangzx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhangzhengxin2000@outlook.com" title="E-Mail → mailto:zhangzhengxin2000@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhang Zhengxin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共82.7k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+
+
+</body>
+</html>
