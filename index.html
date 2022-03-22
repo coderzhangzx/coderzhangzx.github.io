@@ -134,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">52</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
 
   </li>
   </ul>
@@ -162,6 +162,419 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/23/stringbuilderbuffer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/23/stringbuilderbuffer/" class="post-title-link" itemprop="url">String StringBuffer StringBuilder</a>
+        </h2>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-23 02:03:54 / 修改时间：02:28:52" itemprop="dateCreated datePublished" datetime="2022-03-23T02:03:54+08:00">2022-03-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+          
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <span id="more"></span>
+
+<p>在Java中字符串的表示有三种方式 <strong>String</strong> <strong>StringBuilder</strong> <strong>StringBuffer</strong> .</p>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p><strong>String是不可变的字符串</strong>，它的底层是一个用final修饰的字符数组（现在版本的jdk改为**final修饰的byte[]**）</p>
+<p><img src="/../pics/v2-0606f98ff16e2368032c60f393ce3ef9_720w.jpg" alt="img"></p>
+<p><strong>String 对象赋值之后就会在字符串常量池中缓存</strong>，如果下次创建会判定常量池是否已经有缓存对象，如果有的话直接返回该引用给创建者。</p>
+<p><strong>什么是字符串常量池？</strong></p>
+<p>Java中的字符串常量池（String Pool）是Java堆内存中的一片内存空间。</p>
+<p>我们知道String是java中比较特殊的类，我们可以使用new运算符创建String对象，也可以用双引号（”“）创建字串对象，看下图：</p>
+<p><img src="/../pics/v2-7be1a40a5698767cc210069f4541fff6_720w.jpg" alt="img"></p>
+<p>String s1 &#x3D; “Cat”当我们用这种方式创建字符串对象的时候，首先会去字符串常量池中查找看有没有“Cat”字符串，如果有则返回它的地址给s1,如果没有则在常量池中创建“Cat”字符串，并将地址返回给s1.</p>
+<p>String s3 &#x3D; new String(“Cat”)当我们用这种方式创建字符串对象的时候，首先会去字符串常量池中查找看有没有“Cat”字符串,如果没有则在常量池中创建“Cat”字符串，然后在堆内存中创建“Cat”字符串，并将堆内存中的地址返回给s3.</p>
+<p>所以结果 s1 &#x3D;&#x3D; s2 为true s1&#x3D;&#x3D;s3为false,s1和s2都指向了常量池中的“Cat”而s3指向了堆内存中的“Cat”</p>
+<p>大家想想 如果有这么一行代码 String str &#x3D; new String(“hello”)</p>
+<p>在内存中会创建几个字符串对象？</p>
+<p>答案是一个或两个</p>
+<p><strong>如果常量池中已经存在“hello”,则会在堆内存中创建一个“hello”对象，如果常量池中不存在则在常量池中创建一个，在堆内存中创建一个</strong>。</p>
+<p>通过引入字符串常量池的概念，让字符串处理的效率得到了提高，这是jvm对字符串的一种优化手段。</p>
+<p>当我们做拼接字符串操作的时候：</p>
+<p>String str &#x3D; “you”;</p>
+<p>Str &#x3D; str+”win”;</p>
+<p>底层是这样的：</p>
+<p><img src="/../pics/v2-514516cc8269d33eb51567f5985e6abd_720w.jpg" alt="img"></p>
+<p>Str刚开始指向常量池中的“you”，拼接字符串“win”的时候又开辟了两块块内存空间一块保存“win”,一块保存拼接以后生成的字符串“ you win”并且str指向拼接以后的字符串，在这个过程中一共占用了三块内存空间，所以效率是非常低下的。</p>
+<h3 id="StringBuilder-和-StringBuffer"><a href="#StringBuilder-和-StringBuffer" class="headerlink" title="StringBuilder 和 StringBuffer"></a><strong>StringBuilder 和 StringBuffer</strong></h3><p>都继承于：AbstractStringBuilder<br>他们的底层使用的是没有用final修饰的byte数组：byte[]</p>
+<p>所以在做字符串拼接的时候就在原来的内存上进行拼接，不会浪费内存空间。</p>
+<p>StringBuilder和StringBuffer的区别是</p>
+<p>StringBuilder是线程不安全的，它的执行效率比StriingBuffer要高</p>
+<p>StringBuffer是线程安全的，它的执行效率比StringBuilder要低</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a><strong>总结：</strong></h3><p>1.String字符串是不可变的。</p>
+<p>2.较少的字符串可以直接使用String</p>
+<p>3.在修改字符串操作比较多的时候用StringBuilder或StringBuffer.</p>
+<p>在要求线程安全的情况下用StringBuffer</p>
+<p>在不要求线程安全的情况下用StringBuilder</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/22/abstract-class-and-interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/22/abstract-class-and-interface/" class="post-title-link" itemprop="url">接口和抽象类</a>
+        </h2>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-22 23:57:38" itemprop="dateCreated datePublished" datetime="2022-03-22T23:57:38+08:00">2022-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-23 01:19:32" itemprop="dateModified" datetime="2022-03-23T01:19:32+08:00">2022-03-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+          
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/22/abstract-class-and-interface/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/22/sandataxing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/22/sandataxing/" class="post-title-link" itemprop="url">面向对象三大特性</a>
+        </h2>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-22 23:53:18 / 修改时间：23:56:53" itemprop="dateCreated datePublished" datetime="2022-03-22T23:53:18+08:00">2022-03-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+          
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/22/sandataxing/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/22/chongxiechongzaifugai/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/22/chongxiechongzaifugai/" class="post-title-link" itemprop="url">重写 重载 覆盖</a>
+        </h2>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-22 23:22:17" itemprop="dateCreated datePublished" datetime="2022-03-22T23:22:17+08:00">2022-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-23 02:23:28" itemprop="dateModified" datetime="2022-03-23T02:23:28+08:00">2022-03-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+          
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/22/chongxiechongzaifugai/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/22/2022zijiezhifuhouduanyimian/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.gif">
+      <meta itemprop="name" content="Zhang Zhengxin">
+      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZZX's 深境螺旋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/22/2022zijiezhifuhouduanyimian/" class="post-title-link" itemprop="url">2022字节支付后端一面</a>
+        </h2>
+      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-22 15:07:59 / 修改时间：15:39:00" itemprop="dateCreated datePublished" datetime="2022-03-22T15:07:59+08:00">2022-03-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AF%95-%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">笔试&面试</span></a>
+                </span>
+            </span>
+          
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/22/2022zijiezhifuhouduanyimian/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -547,399 +960,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/20/lock/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.gif">
-      <meta itemprop="name" content="Zhang Zhengxin">
-      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZZX's 深境螺旋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/20/lock/" class="post-title-link" itemprop="url">MySQL中的各种锁</a>
-        </h2>
-      
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-20 04:44:38" itemprop="dateCreated datePublished" datetime="2022-03-20T04:44:38+08:00">2022-03-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-21 22:39:57" itemprop="dateModified" datetime="2022-03-21T22:39:57+08:00">2022-03-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-                </span>
-            </span>
-          
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/20/lock/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/20/shixian-huandu/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.gif">
-      <meta itemprop="name" content="Zhang Zhengxin">
-      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZZX's 深境螺旋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/20/shixian-huandu/" class="post-title-link" itemprop="url">MySQL中如何解决幻读的问题</a>
-        </h2>
-      
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-20 03:14:20 / 修改时间：03:52:25" itemprop="dateCreated datePublished" datetime="2022-03-20T03:14:20+08:00">2022-03-20</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-                </span>
-            </span>
-          
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/20/shixian-huandu/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/19/mvcc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.gif">
-      <meta itemprop="name" content="Zhang Zhengxin">
-      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZZX's 深境螺旋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/19/mvcc/" class="post-title-link" itemprop="url">mvcc详解</a>
-        </h2>
-      
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-19 22:37:52" itemprop="dateCreated datePublished" datetime="2022-03-19T22:37:52+08:00">2022-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-20 02:58:16" itemprop="dateModified" datetime="2022-03-20T02:58:16+08:00">2022-03-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-                </span>
-            </span>
-          
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/19/mvcc/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/19/shiwu-bingfa-geli/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.gif">
-      <meta itemprop="name" content="Zhang Zhengxin">
-      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZZX's 深境螺旋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/19/shiwu-bingfa-geli/" class="post-title-link" itemprop="url">MySQL中的事务、和隔离级别</a>
-        </h2>
-      
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-19 15:47:12" itemprop="dateCreated datePublished" datetime="2022-03-19T15:47:12+08:00">2022-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-20 02:42:22" itemprop="dateModified" datetime="2022-03-20T02:42:22+08:00">2022-03-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-                </span>
-            </span>
-          
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/19/shiwu-bingfa-geli/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/19/thread-communicate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.gif">
-      <meta itemprop="name" content="Zhang Zhengxin">
-      <meta itemprop="description" content="This is a blog containing all the infor learn within my CS learning process!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZZX's 深境螺旋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/19/thread-communicate/" class="post-title-link" itemprop="url">进程间通信的八种方式</a>
-        </h2>
-      
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-19 00:35:19 / 修改时间：02:02:22" itemprop="dateCreated datePublished" datetime="2022-03-19T00:35:19+08:00">2022-03-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
-                </span>
-            </span>
-          
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/19/thread-communicate/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1011,7 +1031,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1070,7 +1090,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共86.5k字</span>
+  <span class="post-count">博客全站共89.7k字</span>
 </div>
         
 
