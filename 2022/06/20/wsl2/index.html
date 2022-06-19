@@ -26,12 +26,12 @@
   </script>
 
   <meta property="og:type" content="article">
-<meta property="og:title" content="wsl2的安装配置">
+<meta property="og:title" content="wsl2的安装&#x2F;配置&#x2F;GUI">
 <meta property="og:url" content="http://example.com/2022/06/20/wsl2/index.html">
 <meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-06-19T17:29:41.000Z">
-<meta property="article:modified_time" content="2022-06-19T18:02:36.163Z">
+<meta property="article:modified_time" content="2022-06-19T19:22:18.545Z">
 <meta property="article:author" content="Zhang Zhengxin">
 <meta property="article:tag" content="WSL2">
 <meta name="twitter:card" content="summary">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>wsl2的安装配置 | ZZX's 深境螺旋</title>
+  <title>wsl2的安装/配置/GUI | ZZX's 深境螺旋</title>
   
 
 
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          wsl2的安装配置
+          wsl2的安装/配置/GUI
         </h1>
       
         <div class="post-meta">
@@ -192,7 +192,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-06-20 01:29:41 / 修改时间：02:02:36" itemprop="dateCreated datePublished" datetime="2022-06-20T01:29:41+08:00">2022-06-20</time>
+              <time title="创建时间：2022-06-20 01:29:41 / 修改时间：03:22:18" itemprop="dateCreated datePublished" datetime="2022-06-20T01:29:41+08:00">2022-06-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,12 +218,86 @@
       
         <span id="more"></span>
 
-<p>WSL2是支持在windows上直接运行常见的虚拟机镜像，以下以Ubuntu为例</p>
-<p>安装+配置：<a target="_blank" rel="noopener" href="https://www.ofweek.com/ai/2021-07/ART-201715-11000-30511707.html">WSL2详解：Windows亲生的Linux子系统 - OFweek 人工智能网</a></p>
-<p>bug1：Ubuntu中，命令“startxfce4”无法打开GUI，报错如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/startxfce4: X server already running on display 172.31.128.1:0.0         xrdb: Connection timed out                                                         xrdb: Can&#x27;t open display &#x27;172.31.128.1:0.0&#x27; </span><br></pre></td></tr></table></figure>
+<p>网上的大部分教程都是使用xfce4来实现GUI，但我就是不行…而且图形界面本身也不是很好看，故直接用微软的官方文档了，通过命令行打开chrome&#x2F;msteams&#x2F;文件管理器&#x2F;文件编辑器等</p>
+<h3 id="全新安装-没有以前的-WSL-安装"><a href="#全新安装-没有以前的-WSL-安装" class="headerlink" title="全新安装 - 没有以前的 WSL 安装"></a>全新安装 - 没有以前的 WSL 安装</h3><p>如果你尚未安装，请<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/install">安装 WSL</a> 并为 Linux 发行版设置用户名和密码。</p>
+<ol>
+<li><p>使用管理员特权打开命令提示符。</p>
+<p>选择“开始”，键入 PowerShell，右键单击“Windows PowerShell”，然后选择“以管理员身份运行”。</p>
+</li>
+<li><p>运行此命令，在出现提示时重启计算机：</p>
+<p>PowerShell复制</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--install</span> <span class="literal">-d</span> Ubuntu</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>计算机完成重启后，安装将继续进行，并要求你输入用户名和密码。 这将是 Ubuntu 发行版的 Linux 凭据。</p>
+</li>
+</ol>
+<p>现在，可开始在 WSL 上使用 Linux GUI 应用了！</p>
+<h3 id="现有-WSL-安装"><a href="#现有-WSL-安装" class="headerlink" title="现有 WSL 安装"></a>现有 WSL 安装</h3><p>如果已在计算机上安装 WSL，可通过从提升的命令提示符运行更新命令来更新到包含 Linux GUI 支持的最新版本。</p>
+<ol>
+<li><p>选择“开始”，键入 PowerShell，右键单击“Windows PowerShell”，然后选择“以管理员身份运行”。</p>
+</li>
+<li><p>输入 WSL 更新命令：</p>
+<p>PowerShell复制</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--update</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>需要重启 WSL，更新才能生效。 可通过在 PowerShell 中运行关闭命令来重启 WSL。</p>
+<p>PowerShell复制</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--shutdown</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p> 备注</p>
+<p>Linux GUI 应用仅受 WSL 2 支持，并且不能用于为 WSL 1 配置的 Linux 发行版。 了解<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/basic-commands#set-wsl-version-to-1-or-2">如何将发行版从 WSL 1 更改为 WSL 2</a>。</p>
+<h2 id="运行-Linux-GUI-应用"><a href="#运行-Linux-GUI-应用" class="headerlink" title="运行 Linux GUI 应用"></a>运行 Linux GUI 应用</h2><p>可从 Linux 终端运行以下命令，下载并安装这些常用的 Linux 应用程序。 如果使用的是不同于 Ubuntu 的发行版，则它可能使用与 apt 不同的包管理器。 安装 Linux 应用程序后，可在“开始”菜单中的发行版名称下找到它。 例如：<code>Ubuntu -&gt; Microsoft Edge</code>。</p>
+<p> 备注</p>
+<p>对 WSL 上的 GUI 应用的支持不提供完整的桌面体验。 它依赖于Windows桌面，因此不支持安装以桌面为中心的工具或应用。 若要请求其他支持，可以在 <a target="_blank" rel="noopener" href="https://github.com/microsoft/wslg/issues">GitHub 上的 WSLg 存储库</a>中提出问题。</p>
+<h3 id="更新发行版中的包"><a href="#更新发行版中的包" class="headerlink" title="更新发行版中的包"></a>更新发行版中的包</h3><p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
 
-<p>解决方案：</p>
+<h3 id="安装-Gedit"><a href="#安装-Gedit" class="headerlink" title="安装 Gedit"></a>安装 Gedit</h3><p>Gedit 是 GNOME 桌面环境的默认文本编辑器。</p>
+<p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gedit -y</span><br></pre></td></tr></table></figure>
+
+<p>若要在编辑器中启动 bashrc 文件，请输入：<code>gedit ~/.bashrc</code></p>
+<h3 id="安装-GIMP"><a href="#安装-GIMP" class="headerlink" title="安装 GIMP"></a>安装 GIMP</h3><p>GIMP 是一种免费的开源光栅图形编辑器，用于图像操作和图像编辑、自由形态绘图、不同图像文件格式之间的转码，以及更专业的任务。</p>
+<p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gimp -y</span><br></pre></td></tr></table></figure>
+
+<p>若要启动，请输入：<code>gimp</code></p>
+<h3 id="安装-Nautilus"><a href="#安装-Nautilus" class="headerlink" title="安装 Nautilus"></a>安装 Nautilus</h3><p>Nautilus 也称为 GNOME Files，是 GNOME 桌面的文件管理器。 （类似于 Windows 文件资源管理器）。</p>
+<p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install nautilus -y</span><br></pre></td></tr></table></figure>
+
+<p>若要启动，请输入：<code>nautilus</code></p>
+<h3 id="安装-VLC"><a href="#安装-VLC" class="headerlink" title="安装 VLC"></a>安装 VLC</h3><p>VLC 是一种免费的开源跨平台多媒体播放器和框架，可播放大多数多媒体文件。</p>
+<p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install vlc -y</span><br></pre></td></tr></table></figure>
+
+<p>若要启动，请输入：<code>vlc</code></p>
+<h3 id="安装-X11-应用"><a href="#安装-X11-应用" class="headerlink" title="安装 X11 应用"></a>安装 X11 应用</h3><p>X11 是 Linux 窗口管理系统，这是随它一起提供的各种应用和工具的集合，例如 xclock、xcalc 计算器、用于剪切和粘贴的 xclipboard、用于事件测试的 xev 等。有关详细信息，请参阅 <a target="_blank" rel="noopener" href="https://www.x.org/wiki/UserDocumentation/GettingStarted/">x.org 文档</a>。</p>
+<p>Bash复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install x11-apps -y</span><br></pre></td></tr></table></figure>
+
+<p>若要启动，请输入要使用的工具的名称。 例如：</p>
+<ul>
+<li><code>xcalc</code>, <code>xclock</code>, <code>xeyes</code></li>
+</ul>
+<h3 id="安装适用于-Linux-的-Google-Chrome"><a href="#安装适用于-Linux-的-Google-Chrome" class="headerlink" title="安装适用于 Linux 的 Google Chrome"></a>安装适用于 Linux 的 Google Chrome</h3><p>安装适用于 Linux 的 Google Chrome：</p>
+<ol>
+<li>将目录更改为 temp 文件夹：<code>cd /tmp</code></li>
+<li>使用 wget 下载它：<code>sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</code></li>
+<li>获取当前稳定版本：<code>sudo dpkg -i google-chrome-stable_current_amd64.deb</code></li>
+<li>修复包：<code>sudo apt install --fix-broken -y</code></li>
+<li>配置包：<code>sudo dpkg -i google-chrome-stable_current_amd64.deb</code></li>
+</ol>
+<p>若要启动，请输入：<code>google-chrome</code></p>
+<h3 id="安装适用于-Linux-的-Microsoft-Teams"><a href="#安装适用于-Linux-的-Microsoft-Teams" class="headerlink" title="安装适用于 Linux 的 Microsoft Teams"></a>安装适用于 Linux 的 Microsoft Teams</h3><p>安装适用于 Linux 的 Microsoft Teams：</p>
+<ol>
+<li>将目录更改为 temp 文件夹：<code>cd /tmp</code></li>
+<li>使用 curl 下载包：<code>sudo curl -L -o &quot;./teams.deb&quot; &quot;https://teams.microsoft.com/downloads/desktopurl?env=production&amp;plat=linux&amp;arch=x64&amp;download=true&amp;linuxArchiveType=deb&quot;</code></li>
+<li>使用 apt 安装它：<code>sudo apt install ./teams.deb -y</code></li>
+</ol>
+<p>若要启动，请输入：<code>teams</code></p>
+<h3 id="安装适用于-Linux-的-Microsoft-Edge-浏览器"><a href="#安装适用于-Linux-的-Microsoft-Edge-浏览器" class="headerlink" title="安装适用于 Linux 的 Microsoft Edge 浏览器"></a>安装适用于 Linux 的 Microsoft Edge 浏览器</h3><p>在 Edge Insider 站点上查找有关<a target="_blank" rel="noopener" href="https://www.microsoftedgeinsider.com/download/?platform=linux-deb">如何使用命令行安装适用于 Linux 的 Microsoft Edge 浏览器的信息</a>。 选择页面命令行安装部分下的“获取说明”。</p>
+<p>若要启动，请输入：<code>microsoft-edge</code></p>
 
     </div>
 
@@ -307,6 +381,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E6%96%B0%E5%AE%89%E8%A3%85-%E6%B2%A1%E6%9C%89%E4%BB%A5%E5%89%8D%E7%9A%84-WSL-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">全新安装 - 没有以前的 WSL 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89-WSL-%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">现有 WSL 安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C-Linux-GUI-%E5%BA%94%E7%94%A8"><span class="nav-number"></span> <span class="nav-text">运行 Linux GUI 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%91%E8%A1%8C%E7%89%88%E4%B8%AD%E7%9A%84%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">更新发行版中的包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Gedit"><span class="nav-number">2.</span> <span class="nav-text">安装 Gedit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-GIMP"><span class="nav-number">3.</span> <span class="nav-text">安装 GIMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Nautilus"><span class="nav-number">4.</span> <span class="nav-text">安装 Nautilus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-VLC"><span class="nav-number">5.</span> <span class="nav-text">安装 VLC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-X11-%E5%BA%94%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">安装 X11 应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%80%82%E7%94%A8%E4%BA%8E-Linux-%E7%9A%84-Google-Chrome"><span class="nav-number">7.</span> <span class="nav-text">安装适用于 Linux 的 Google Chrome</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%80%82%E7%94%A8%E4%BA%8E-Linux-%E7%9A%84-Microsoft-Teams"><span class="nav-number">8.</span> <span class="nav-text">安装适用于 Linux 的 Microsoft Teams</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%80%82%E7%94%A8%E4%BA%8E-Linux-%E7%9A%84-Microsoft-Edge-%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">安装适用于 Linux 的 Microsoft Edge 浏览器</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -381,7 +456,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共94.9k字</span>
+  <span class="post-count">博客全站共96.0k字</span>
 </div>
         
 
