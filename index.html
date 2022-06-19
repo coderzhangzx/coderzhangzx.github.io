@@ -645,9 +645,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-23 16:05:41 / 修改时间：16:13:53" itemprop="dateCreated datePublished" datetime="2022-03-23T16:05:41+08:00">2022-03-23</time>
+              <time title="创建时间：2022-03-23 16:05:41" itemprop="dateCreated datePublished" datetime="2022-03-23T16:05:41+08:00">2022-03-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-20 02:11:59" itemprop="dateModified" datetime="2022-06-20T02:11:59+08:00">2022-06-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
             </span>
           
           
@@ -661,36 +676,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <span id="more"></span>
-
-<p>在java语言中，a+&#x3D;b和a&#x3D;a+b的主要区别是<strong>在运算的精度</strong>上。类似的有“-&#x3D; 、 *&#x3D; 、&#x2F;&#x3D; 、%&#x3D; ”，这里以a+&#x3D;b 与 a&#x3D;a+b 举例说明一下。</p>
-<ol>
-<li>下面是一串代码，我们试一下a&#x3D;a+b的形式：</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">            <span class="type">byte</span> a=<span class="number">1</span>;</span><br><span class="line">            a=a+<span class="number">4</span>;</span><br><span class="line">            System.out.println(a);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/../pics/v2-c2bdf87e474105d4c2b810fbc216c216_720w.jpg" alt="img"></p>
-<p><img src="/../pics/v2-e1346d2b40ab14fa7751f8b090c8fd9b_720w.jpg" alt="img"></p>
-<p>​    从图中可以看出出现了错误，根本无法运行。报错原因我也贴出来了，说是“类型不匹配：不能从int转换为byte”，这里因为a是byte类型，而数字4默认是int 类型。</p>
-<p>​    在java中，在a+4时，会进行 自动类型转换 ，所以a+4 会转换成int类型。而变量a还是byte类型，将int 类型的a+4赋值给byte类型的a ,无疑会报错。</p>
-<p>​    当然，我们也可以进行强类型转换，将已经转换成int类型的a+4强制转换为byte类型，这样也是可以的。但是这种转换可能会导致溢出或者精度的下降，如果容忍可能出现的误差，可以使用这种转换。</p>
-<p>下面是转换的结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestDemo</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">     <span class="type">byte</span> a=<span class="number">1</span>;</span><br><span class="line">     a=(<span class="type">byte</span>)(a+<span class="number">4</span>);</span><br><span class="line">     System.out.println(a);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>下面试一试a+&#x3D;b的形式</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">     <span class="type">byte</span> a=<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">     a+=<span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">     System.out.println(a);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们发现结果是正确的，程序也没毛病。大家需要明确的是“+&#x3D;”是java中的一个运算符，而不是两个，所以在运算时 会进行自动类型转换。所以在编译时没有报错。</p>
-<ol start="3">
-<li>总结一下，在两个变量的数据类型一样时：a+&#x3D;b 和a&#x3D;a+b 是没有区别的。</li>
-</ol>
-<p>但是当两个变量的数据类型不同时，就需要考虑一下数据类型自动转换的问题了。</p>
-<p>也就是涉及到精度了。</p>
-
+          <p> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/23/a-b/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
