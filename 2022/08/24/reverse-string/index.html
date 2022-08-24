@@ -26,17 +26,17 @@
   </script>
 
   <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL中的各种锁">
-<meta property="og:url" content="http://example.com/2022/03/20/lock/index.html">
+<meta property="og:title" content="反转字符串 &amp;&amp; 反转字符串中的单词">
+<meta property="og:url" content="http://example.com/2022/08/24/reverse-string/index.html">
 <meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-19T20:44:38.000Z">
-<meta property="article:modified_time" content="2022-03-21T14:39:57.553Z">
+<meta property="article:published_time" content="2022-08-24T10:33:20.000Z">
+<meta property="article:modified_time" content="2022-08-24T13:04:12.520Z">
 <meta property="article:author" content="Zhang Zhengxin">
-<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2022/03/20/lock/">
+<link rel="canonical" href="http://example.com/2022/08/24/reverse-string/">
 
 
 <script id="page-configurations">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>MySQL中的各种锁 | ZZX's 深境螺旋</title>
+  <title>反转字符串 && 反转字符串中的单词 | ZZX's 深境螺旋</title>
   
 
 
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/20/lock/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/24/reverse-string/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.gif">
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MySQL中的各种锁
+          反转字符串 && 反转字符串中的单词
         </h1>
       
         <div class="post-meta">
@@ -190,23 +190,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-03-20 04:44:38" itemprop="dateCreated datePublished" datetime="2022-03-20T04:44:38+08:00">2022-03-20</time>
+              <time title="创建时间：2022-08-24 18:33:20 / 修改时间：21:04:12" itemprop="dateCreated datePublished" datetime="2022-08-24T18:33:20+08:00">2022-08-24</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-21 22:39:57" itemprop="dateModified" datetime="2022-03-21T22:39:57+08:00">2022-03-21</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                  <a href="/categories/yanyan-s-OS/" itemprop="url" rel="index"><span itemprop="name">yanyan's OS</span></a>
                 </span>
             </span>
           
@@ -224,9 +218,26 @@
       
         <span id="more"></span>
 
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jelly12345/p/14491009.html">mysql记录锁（record lock）,间隙锁（gap lock）,Next-key锁（Next-key lock） - 郭慕荣 - 博客园 (cnblogs.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yaochunhui/p/14186371.html">MySQL的各种锁 - 姚春辉 - 博客园 (cnblogs.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1169873#:~:text=%E5%85%B1%E4%BA%AB%E9%94%81%E5%92%8C%E6%8E%92%E5%AE%83%E9%94%81%E6%98%AF%E6%82%B2%E8%A7%82%E9%94%81%E7%9A%84%E4%B8%8D%E5%90%8C%E7%9A%84%E5%AE%9E%E7%8E%B0,%EF%BC%8C%E5%AE%83%E4%BF%A9%E9%83%BD%E5%B1%9E%E4%BA%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%9A%84%E8%8C%83%E7%95%B4%E3%80%82">MySQL&#x2F;InnoDB中，乐观锁、悲观锁、共享锁、排它锁、行锁、表锁、死锁概念的理解</a></p>
+<p><code>反转字符串</code>的思路比较简单，即使用双指针指向头尾，逐次交换字符即可。但交换字符的时候可以采用<code>巧妙</code>的代码，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">reverseString</span><span class="params">(<span class="type">char</span>[] s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">l</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> s.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (l &lt; r) &#123;</span><br><span class="line">            s[l] ^= s[r];  <span class="comment">//构造 a ^ b 的结果，并放在 a 中</span></span><br><span class="line">            s[r] ^= s[l];  <span class="comment">//将 a ^ b 这一结果再 ^ b ，存入b中，此时 b = a, a = a ^ b</span></span><br><span class="line">            s[l] ^= s[r];  <span class="comment">//a ^ b 的结果再 ^ a ，存入 a 中，此时 b = a, a = b 完成交换</span></span><br><span class="line">            l++;</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>利用<code>异或</code>的性质，节约了一个中间变量<code>temp</code>的空间，并且没有使用任何库函数。</p>
+<hr>
+<p><code>反转字符串中的单词</code>：</p>
+<ul>
+<li><p>给你一个字符串 s ，请你反转字符串中单词的顺序。</p>
+</li>
+<li><p>单词是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的单词分隔开。</p>
+</li>
+<li><p>返回单词顺序颠倒且单词之间用单个空格连接的结果字符串。</p>
+</li>
+<li><p>注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。</p>
+</li>
+</ul>
+<p>可以利用<code>反转字符串</code>的思路，先使用一个额外函数去除多余的空格（前导&#x2F;尾随&#x2F;单词间的多个空格），然后反转整个字符串，随后再将每个单词单独倒置，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 不使用Java内置方法实现</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * 1.去除首尾以及中间多余空格</span></span><br><span class="line"><span class="comment">     * 2.反转整个字符串</span></span><br><span class="line"><span class="comment">     * 3.反转各个单词</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">reverseWords</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.去除首尾以及中间多余空格</span></span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> removeSpace(s);</span><br><span class="line">        <span class="comment">// 2.反转整个字符串</span></span><br><span class="line">        reverseString(sb, <span class="number">0</span>, sb.length() - <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 3.反转各个单词</span></span><br><span class="line">        reverseEachWord(sb);</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> StringBuilder <span class="title function_">removeSpace</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">end</span> <span class="operator">=</span> s.length() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (s.charAt(start) == <span class="string">&#x27; &#x27;</span>) start++;</span><br><span class="line">        <span class="keyword">while</span> (s.charAt(end) == <span class="string">&#x27; &#x27;</span>) end--;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">while</span> (start &lt;= end) &#123;</span><br><span class="line">            <span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> s.charAt(start);</span><br><span class="line">            <span class="keyword">if</span> (c != <span class="string">&#x27; &#x27;</span> || sb.charAt(sb.length() - <span class="number">1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                sb.append(c);</span><br><span class="line">            &#125;</span><br><span class="line">            start++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 反转字符串指定区间[start, end]的字符</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">reverseString</span><span class="params">(StringBuilder sb, <span class="type">int</span> start, <span class="type">int</span> end)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (start &lt; end) &#123;</span><br><span class="line">            <span class="type">char</span> <span class="variable">temp</span> <span class="operator">=</span> sb.charAt(start);</span><br><span class="line">            sb.setCharAt(start, sb.charAt(end));</span><br><span class="line">            sb.setCharAt(end, temp);</span><br><span class="line">            start++;</span><br><span class="line">            end--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">reverseEachWord</span><span class="params">(StringBuilder sb)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">end</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> sb.length();</span><br><span class="line">        <span class="keyword">while</span> (end &lt; n) &#123;</span><br><span class="line">            <span class="keyword">while</span> (end &lt; n &amp;&amp; sb.charAt(end) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                end++;</span><br><span class="line">            &#125;</span><br><span class="line">            reverseString(sb, start, end - <span class="number">1</span>);</span><br><span class="line">            start = end + <span class="number">1</span>;</span><br><span class="line">            end = start + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里为了处理字符串方便，全程使用<code>StringBuilder</code>作为中间的返回变量，而没有使用<code>反转字符串</code>中的异或</p>
 
     </div>
 
@@ -236,7 +247,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
           </div>
 
         
@@ -245,13 +256,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/03/20/shixian-huandu/" rel="prev" title="MySQL中如何解决幻读的问题">
-      <i class="fa fa-chevron-left"></i> MySQL中如何解决幻读的问题
+    <a href="/2022/07/28/cmd-in-linux-1/" rel="prev" title="Linux命令-1">
+      <i class="fa fa-chevron-left"></i> Linux命令-1
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/03/20/hashmap-hashtable/" rel="next" title="HashMap，Hashtable和ConcurrentHashMap的分析与比较">
-      HashMap，Hashtable和ConcurrentHashMap的分析与比较 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
