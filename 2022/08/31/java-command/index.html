@@ -31,7 +31,7 @@
 <meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-31T11:25:36.000Z">
-<meta property="article:modified_time" content="2022-09-04T12:06:00.589Z">
+<meta property="article:modified_time" content="2022-12-28T10:32:25.363Z">
 <meta property="article:author" content="Zhang Zhengxin">
 <meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-04 20:06:00" itemprop="dateModified" datetime="2022-09-04T20:06:00+08:00">2022-09-04</time>
+                <time title="修改时间：2022-12-28 18:32:25" itemprop="dateModified" datetime="2022-12-28T18:32:25+08:00">2022-12-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -224,29 +224,39 @@
       
         <span id="more"></span>
 
-<ol>
+<ul>
 <li>HashSet转数组（以int类型为例）</li>
-</ol>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// return type: int[]</span></span><br><span class="line">HashSet&lt;Integer&gt; resSet = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;() ;</span><br><span class="line"><span class="keyword">return</span> resSet.stream().mapToInt(x -&gt; x).toArray();</span><br></pre></td></tr></table></figure>
 
-<ol start="2">
+<ul>
+<li>直接将int封装为int[]和List<Integer></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>, b = <span class="number">2</span>, c = <span class="number">3</span> ;</span><br><span class="line">List&lt;Integer&gt; list = Arrays.asList(a,b,c) ;</span><br><span class="line"><span class="type">int</span>[] array = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;a,b,c&#125; ;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Integer[], int[], List<Integer>的转换</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] data = &#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">1</span>&#125;;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// int[] 转 List&lt;Integer&gt;</span></span><br><span class="line">        List&lt;Integer&gt; list1 = Arrays.stream(data).boxed().collect(Collectors.toList());</span><br><span class="line">        <span class="comment">// Arrays.stream(arr) 可以替换成IntStream.of(arr)。</span></span><br><span class="line">        <span class="comment">// 1.使用Arrays.stream将int[]转换成IntStream。</span></span><br><span class="line">        <span class="comment">// 2.使用IntStream中的boxed()装箱。将IntStream转换成Stream&lt;Integer&gt;。</span></span><br><span class="line">        <span class="comment">// 3.使用Stream的collect()，将Stream&lt;T&gt;转换成List&lt;T&gt;，因此正是List&lt;Integer&gt;。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// int[] 转 Integer[]</span></span><br><span class="line">        Integer[] integers1 = Arrays.stream(data).boxed().toArray(Integer[]::<span class="keyword">new</span>);</span><br><span class="line">        <span class="comment">// 前两步同上，此时是Stream&lt;Integer&gt;。</span></span><br><span class="line">        <span class="comment">// 然后使用Stream的toArray，传入IntFunction&lt;A[]&gt; generator。</span></span><br><span class="line">        <span class="comment">// 这样就可以返回Integer数组。</span></span><br><span class="line">        <span class="comment">// 不然默认是Object[]。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// List&lt;Integer&gt; 转 Integer[]</span></span><br><span class="line">        Integer[] integers2 = list1.toArray(<span class="keyword">new</span> <span class="title class_">Integer</span>[<span class="number">0</span>]);</span><br><span class="line">        <span class="comment">//  调用toArray。传入参数T[] a。这种用法是目前推荐的。</span></span><br><span class="line">        <span class="comment">// List&lt;String&gt;转String[]也同理。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// List&lt;Integer&gt; 转 int[]</span></span><br><span class="line">        <span class="type">int</span>[] arr1 = list1.stream().mapToInt(Integer::valueOf).toArray();</span><br><span class="line">        <span class="comment">// 想要转换成int[]类型，就得先转成IntStream。</span></span><br><span class="line">        <span class="comment">// 这里就通过mapToInt()把Stream&lt;Integer&gt;调用Integer::valueOf来转成IntStream</span></span><br><span class="line">        <span class="comment">// 而IntStream中默认toArray()转成int[]。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Integer[] 转 int[]</span></span><br><span class="line">        <span class="type">int</span>[] arr2 = Arrays.stream(integers1).mapToInt(Integer::valueOf).toArray();</span><br><span class="line">        <span class="comment">// 思路同上。先将Integer[]转成Stream&lt;Integer&gt;，再转成IntStream。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Integer[] 转 List&lt;Integer&gt;</span></span><br><span class="line">        List&lt;Integer&gt; list2 = Arrays.asList(integers1);</span><br><span class="line">        <span class="comment">// 最简单的方式。String[]转List&lt;String&gt;也同理。</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 同理</span></span><br><span class="line">        String[] strings1 = &#123;<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>&#125;;</span><br><span class="line">        <span class="comment">// String[] 转 List&lt;String&gt;</span></span><br><span class="line">        List&lt;String&gt; list3 = Arrays.asList(strings1);</span><br><span class="line">        <span class="comment">// List&lt;String&gt; 转 String[]</span></span><br><span class="line">        String[] strings2 = list3.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
 <li>判断数组是否为空</li>
-</ol>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一维数组</span></span><br><span class="line"><span class="comment">// 1. array=null 2. array=&#123;&#125;</span></span><br><span class="line"><span class="type">int</span>[] array;</span><br><span class="line"><span class="keyword">if</span>(array==<span class="literal">null</span>||array.length==<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 二维数组</span></span><br><span class="line"><span class="comment">// 1. array=null 2. array=&#123;&#125; 3. array=&#123;&#123;&#125;&#125;</span></span><br><span class="line"><span class="type">int</span>[][] array;</span><br><span class="line"><span class="keyword">if</span>((array==<span class="literal">null</span>||array.length==<span class="number">0</span>)||(arry.length==<span class="number">1</span>&amp;&amp;array[<span class="number">0</span>].length==<span class="number">0</span>))</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
 
-<ol start="3">
+<ul>
 <li>判断字符串是否为空</li>
-</ol>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// s==null 必须在前面，否则在length()中可能抛出java.lang.NullPointerException</span></span><br><span class="line"><span class="keyword">if</span>(s == <span class="literal">null</span> || s.length() == <span class="number">0</span>);</span><br><span class="line"><span class="comment">// 以下两种也可以，但isEmpty()在java 6.0之后才出现，不建议使用</span></span><br><span class="line"><span class="keyword">if</span>(s == <span class="literal">null</span> || s.isEmpty());</span><br><span class="line"><span class="keyword">if</span> (s == <span class="literal">null</span> || s == <span class="string">&quot;&quot;</span>);</span><br></pre></td></tr></table></figure>
 
-<ol start="4">
+<ul>
 <li>声名List嵌套List的变量 &amp;&amp; 将数组转化为List赋值</li>
-</ol>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声名变量result：类比List&lt;INTEGER&gt;，赋值时的Arraylist&lt;&gt;中括号内没有参数</span></span><br><span class="line">List&lt;List&lt;Integer&gt;&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 数组转List：asList函数</span></span><br><span class="line">List&lt;Integer&gt; array2List = Arrays.asList(nums[i], nums[j], nums[k]) ;</span><br><span class="line"><span class="comment">// 赋值</span></span><br><span class="line">result.add(array2List);</span><br></pre></td></tr></table></figure>
 
-<ol start="5">
+<ul>
 <li>声名List嵌套LinkedList的变量 &amp;&amp; 将LinkedList转化为List赋值</li>
-</ol>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// LinkedList类有removeLast()方法，有时候回溯法中需要用到，其赋值也与普通的List不同</span></span><br><span class="line">List&lt;List&lt;Integer&gt;&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">LinkedList&lt;Integer&gt; temp= <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 需要以LinkedList的对象为参数，新建一个List</span></span><br><span class="line">temp.add(<span class="number">1</span>) ;</span><br><span class="line">result.add(<span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(temp) ;</span><br></pre></td></tr></table></figure>
 
     </div>
@@ -405,7 +415,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共104.2k字</span>
+  <span class="post-count">博客全站共104.6k字</span>
 </div>
         
 
