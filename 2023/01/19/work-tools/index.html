@@ -26,17 +26,21 @@
   </script>
 
   <meta property="og:type" content="article">
-<meta property="og:title" content="2022 NUS-ISS-Software Engineering面试">
-<meta property="og:url" content="http://example.com/2022/03/12/2022-nus-iss-se-mianshi/index.html">
+<meta property="og:title" content="工作开发测试工具总结">
+<meta property="og:url" content="http://example.com/2023/01/19/work-tools/index.html">
 <meta property="og:site_name" content="ZZX&#39;s 深境螺旋">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-12T15:21:12.000Z">
-<meta property="article:modified_time" content="2022-03-12T17:13:54.954Z">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12861759-b918f54add3c22f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/946/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12861759-7edf32a0b3239f7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/571/format/webp">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-53426ccac8ceac4be7557d714d798b2f_720w.webp">
+<meta property="article:published_time" content="2023-01-18T16:03:34.000Z">
+<meta property="article:modified_time" content="2023-01-18T16:34:11.517Z">
 <meta property="article:author" content="Zhang Zhengxin">
 <meta property="article:tag" content="笔试&amp;面试">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/12861759-b918f54add3c22f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/946/format/webp">
 
-<link rel="canonical" href="http://example.com/2022/03/12/2022-nus-iss-se-mianshi/">
+<link rel="canonical" href="http://example.com/2023/01/19/work-tools/">
 
 
 <script id="page-configurations">
@@ -49,7 +53,7 @@
   };
 </script>
 
-  <title>2022 NUS-ISS-Software Engineering面试 | ZZX's 深境螺旋</title>
+  <title>工作开发测试工具总结 | ZZX's 深境螺旋</title>
   
 
 
@@ -168,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/12/2022-nus-iss-se-mianshi/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/work-tools/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.gif">
@@ -181,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          2022 NUS-ISS-Software Engineering面试
+          工作开发测试工具总结
         </h1>
       
         <div class="post-meta">
@@ -190,16 +194,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-03-12 23:21:12" itemprop="dateCreated datePublished" datetime="2022-03-12T23:21:12+08:00">2022-03-12</time>
+              <time title="创建时间：2023-01-19 00:03:34 / 修改时间：00:34:11" itemprop="dateCreated datePublished" datetime="2023-01-19T00:03:34+08:00">2023-01-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-13 01:13:54" itemprop="dateModified" datetime="2022-03-13T01:13:54+08:00">2022-03-13</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -224,14 +222,42 @@
       
         <span id="more"></span>
 
-<ol start="0">
-<li>没有自我介绍，可能直接从官网提交的信息看到了吧</li>
-<li>关于软件工程：可能是因为我在project中详细介绍了Module Software Engineering的课设，教授提问了很多里面的概念问题，包括Agile，Product backlog，UML diagram，design patterns…不需要详细的定义，只要能用自己的话说明白就行，如果能结合例子说明会更清楚</li>
-<li>关于实习情况：这个项目会更偏向有工作经验的学生，而作为大四的应届毕业生，这一项评估就只能通过实习体现。教授问了我有没有实习经历，做了多长时间，大概干了写些什么（可能因为我的实习不是SE相关的，所以没有细问，但如果干过开发岗的要好好准备以下这一块），以及有没有继续找实习的打算。</li>
-<li>关于其他：用什么语言多，上过的课，对我们项目的了解（可能通过为什么选择我们、你觉得我们项目能给你提供什么…这类问题来问）等等，基本是穿插着问的，感觉是想起来就问一嘴~</li>
-<li>关于反问：我问了” will I be more competitive than students in CS? “ 和 ” could you tell me how many senior students can be part of your program in previous years？“</li>
+<h3 id="调试接口请求-Postman"><a href="#调试接口请求-Postman" class="headerlink" title="调试接口请求 - Postman"></a>调试接口请求 - Postman</h3><p>​    可以发送几乎任何种类的http请求，也可以通过上传test文件进行简单的接口自动化测试</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12861759-b918f54add3c22f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/946/format/webp" alt="img"></p>
+<p><strong>1</strong>   <strong>Authorization：</strong>身份验证，主要用来填写用户名密码，以及一些验签字段,postman有一个helpers可以帮助我们简化一些重复和复杂的任务。当前的一套helpers可以帮助你解决一些authentication protocols的问题。；</p>
+<p><strong>2</strong>  <strong>Headers：</strong>请求的头部信息</p>
+<p><strong>3</strong>  <strong>Body：</strong>post请求时必须要带的参数，里面放一些key-value键值对</p>
+<p><strong>4</strong>  **Pre-requerst Script:**可以让你在 请求之前自定义请求数据，这个运行在请求之前，语法使用JavaScript语句。</p>
+<p><strong>5</strong>  <strong>tests：</strong>tests标签功能比较强大，通常用来写测试，它是运行在请求之后。支持JavaScript语法。postman每次执行request的时候，会执行tests。测试结果会在tests的tab上面显示一个通过的数量以及对错情况。这个后面会进行详解，它也可以用来设计用例，比如要测试返回结果是否含有某一字符串</p>
+<p><strong>6</strong>  <strong>form-data</strong>：,它将表单数据处理为一条消息，以标签为单元，用分隔符分开。既可以单独上传键值对，也可以直接上传文件（当上传字段是文件时，会有Content-Type来说明文件类型,但该文件不会作为历史保存，只能在每次需要发送请求的时候，重新添加文件。）；post请求里<strong>较常用的一种</strong></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12861759-7edf32a0b3239f7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/571/format/webp" alt="img"></p>
+<p>上传文件</p>
+<p><strong>7</strong>  <strong>x-www-form-urlencoded</strong>：对应信息头-application&#x2F;x-www-from-urlencoded，会将表单内的数据转换为键值对；</p>
+<p><strong>8</strong>  <strong>raw</strong>：可以上传任意类型的文本，比如text、json、xml等,所有填写的text都会随着请求发送；</p>
+<p><strong>9</strong>  <strong>binary</strong>：对应信息头-Content-Type:application&#x2F;octet-stream，只能上传二进制文件，且没有键值对，一次只能上传一个文件, 也不能保存历史，每次选择文件，提交；</p>
+<h3 id="抓包工具-Charles"><a href="#抓包工具-Charles" class="headerlink" title="抓包工具 - Charles"></a>抓包工具 - Charles</h3><p>​    Charles 会自动配置浏览器和工具的代理设置，所以说打开工具直接就已经是抓包状态了。只需要保证一下几点即可：</p>
+<ol>
+<li>确保 Charles 处于 Start Recording 状态。</li>
+<li>勾选 <strong>Proxy | Windows Proxy</strong> 和 <strong>Proxy | Mozilla FireFox Proxy</strong>。</li>
 </ol>
-<p>​        第一个问题，教授只说了是授课和科研的区别；第二个就是官方套话，类似”更偏向工作经历，但优秀背景的本科生也有希望balabala“</p>
+<p>​    此外，通过Recording Settings(记录会话设置)进行有条件抓包</p>
+<p>Recording Settings 和 Start&#x2F;Stop Recording 配合使用，在 Start Recording 的状态下，可以通过 Recording Settings 配置 Charles 的会话记录行为。Recording Settings 的视图如下图所示：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-53426ccac8ceac4be7557d714d798b2f_720w.webp" alt="img"></p>
+<p>Recording Settings 有 <code>Options</code>、<code>Include</code>、<code>Exclude</code> 三个选项卡：</p>
+<ul>
+<li>Options：通过 Recording Size Limits 限制记录数据的大小。当 Charles 记录时，请求、响应头和响应体存储在内存中，或写入磁盘上的临时文件。有时，内存中的数据量可能会变得太多，Charles 会通知您并停止录制。在这种情况下，您应该清除 Charles 会话以释放内存，然后再次开始录制。在录制设置中，您可以限制 Charles 将记录的最大大小; 这根本不会影响你的浏览，Charles 仅会停止录制。</li>
+<li>Include：只有与配置的地址匹配的请求才会被录制。</li>
+<li>Exclude：只有与配置的地址匹配的请求将不会被录制。</li>
+</ul>
+<p><code>Include</code> 和 <code>Exclude</code> 选项卡的操作相同，选择 <code>Add</code>，然后填入需要监控的Procotol、Host 和 Port等信息，这样就达到了过滤的目的。</p>
+<h3 id="手动生成测试对象-Mock"><a href="#手动生成测试对象-Mock" class="headerlink" title="手动生成测试对象 - Mock"></a>手动生成测试对象 - Mock</h3><p>​    不是所有的功能都适合自动化测试，对于一些难以处理的测试点，我们不得不使用Mock技术来模拟。</p>
+<ul>
+<li>登录和注册接口中，密码的Mock</li>
+<li>Mock支付环境（银行卡，用户账号）</li>
+<li>Mock支付密码</li>
+<li>Mock验证码(图片验证码、滑块验证码、人脸识别等、短信验证码等等)</li>
+</ul>
+<h3 id="WEB-x2F-APP自动化测试工具-Selenium-x2F-Appium"><a href="#WEB-x2F-APP自动化测试工具-Selenium-x2F-Appium" class="headerlink" title="WEB&#x2F;APP自动化测试工具 - Selenium&#x2F;Appium"></a>WEB&#x2F;APP自动化测试工具 - Selenium&#x2F;Appium</h3><h3 id="持续继承工具-Jenkins改"><a href="#持续继承工具-Jenkins改" class="headerlink" title="持续继承工具 - Jenkins改"></a>持续继承工具 - Jenkins改</h3><p>​    JAVA编写的开源工具，大公司一般选择在其基础上二次开发，可以让自动化脚本持续运行，并且在rd每次发布release之后自动执行</p>
 
     </div>
 
@@ -250,13 +276,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/03/12/2022-meituan-bishi/" rel="prev" title="2022美团测试开发实习生笔试">
-      <i class="fa fa-chevron-left"></i> 2022美团测试开发实习生笔试
+    <a href="/2023/01/13/monotonic-queue/" rel="prev" title="单调队列的应用">
+      <i class="fa fa-chevron-left"></i> 单调队列的应用
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/03/15/guibing/" rel="next" title="归并排序的原理和实现">
-      归并排序的原理和实现 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -315,6 +338,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%8E%A5%E5%8F%A3%E8%AF%B7%E6%B1%82-Postman"><span class="nav-number">1.</span> <span class="nav-text">调试接口请求 - Postman</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7-Charles"><span class="nav-number">2.</span> <span class="nav-text">抓包工具 - Charles</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E7%94%9F%E6%88%90%E6%B5%8B%E8%AF%95%E5%AF%B9%E8%B1%A1-Mock"><span class="nav-number">3.</span> <span class="nav-text">手动生成测试对象 - Mock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WEB-x2F-APP%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7-Selenium-x2F-Appium"><span class="nav-number">4.</span> <span class="nav-text">WEB&#x2F;APP自动化测试工具 - Selenium&#x2F;Appium</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E7%BB%A7%E6%89%BF%E5%B7%A5%E5%85%B7-Jenkins%E6%94%B9"><span class="nav-number">5.</span> <span class="nav-text">持续继承工具 - Jenkins改</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
